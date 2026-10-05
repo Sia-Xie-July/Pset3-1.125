@@ -1,0 +1,500 @@
+{
+  "countries": [
+    {
+      "id": 1,
+      "name": "Finland",
+      "region": "Kajaani, Kainuu"
+    },
+    {
+      "id": 2,
+      "name": "Canada",
+      "region": "Québec"
+    },
+    {
+      "id": 3,
+      "name": "Singapore",
+      "region": "Singapore"
+    }
+  ],
+  "sources": [
+    {
+      "id": 1,
+      "publisher": "LUMI",
+      "title": "LUMI FAQ",
+      "url": "https://lumi-supercomputer.eu/faq/",
+      "source_type": "webpage",
+      "publication_date": null,
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "documented",
+      "notes": "Curated source; its scope does not establish proposed site capability."
+    },
+    {
+      "id": 2,
+      "publisher": "Fingrid",
+      "title": "Electricity consumption and connection outlook",
+      "url": "https://www.fingrid.fi/en/news/news/2026/electricity-consumption-is-set-to-increase-sharply--more-balancing-power-will-also-be-needed/",
+      "source_type": "webpage",
+      "publication_date": "2026-08-18",
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "documented",
+      "notes": "Curated source; its scope does not establish proposed site capability."
+    },
+    {
+      "id": 3,
+      "publisher": "U.S. Department of Energy / FEMP",
+      "title": "Best Practices Guide for Energy-Efficient Data Center Design",
+      "url": "https://www.energy.gov/sites/default/files/2024-07/best-practice-guide-data-center-design.pdf",
+      "source_type": "report",
+      "publication_date": "2024-07",
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "documented",
+      "notes": "Curated source; its scope does not establish proposed site capability."
+    },
+    {
+      "id": 4,
+      "publisher": "Statistics Finland",
+      "title": "Electricity production in 2024",
+      "url": "https://stat.fi/en/publication/cm1hs1qfy32tf07w5nzls9o0b",
+      "source_type": "webpage",
+      "publication_date": "2025-11-27",
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "documented",
+      "notes": "Curated source; its scope does not establish proposed site capability."
+    },
+    {
+      "id": 5,
+      "publisher": "Energy Market Authority",
+      "title": "Singapore Energy Statistics: Chapter 2",
+      "url": "https://www.ema.gov.sg/resources/singapore-energy-statistics/chapter2",
+      "source_type": "webpage",
+      "publication_date": "2025-10-24",
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "documented",
+      "notes": "Curated source; its scope does not establish proposed site capability."
+    },
+    {
+      "id": 6,
+      "publisher": "Hydro-Québec",
+      "title": "Electricity demand in Québec",
+      "url": "https://www.hydroquebec.com/documents-data/open-data/electricity-demand-quebec/",
+      "source_type": "dataset",
+      "publication_date": null,
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "tested",
+      "notes": "Provincial raw data without quality guarantee. Future placeholders must be excluded. Timezone remains unconfirmed.",
+      "endpoint_url": "https://www.hydroquebec.com/data/documents-donnees/donnees-ouvertes/json/demande.json",
+      "verified_at": "2026-10-05T19:49:46+00:00",
+      "license": "CC BY-NC 4.0"
+    },
+    {
+      "id": 7,
+      "publisher": "Hydro-Québec",
+      "title": "Electricity generation in Québec",
+      "url": "https://www.hydroquebec.com/documents-data/open-data/electricity-generation-quebec/",
+      "source_type": "dataset",
+      "publication_date": null,
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "tested",
+      "notes": "Provincial raw data without quality guarantee. Future placeholders must be excluded. Timezone remains unconfirmed.",
+      "endpoint_url": "https://www.hydroquebec.com/data/documents-donnees/donnees-ouvertes/json/production.json",
+      "verified_at": "2026-10-05T19:49:46+00:00",
+      "license": "CC BY-NC 4.0"
+    },
+    {
+      "id": 8,
+      "publisher": "Energy Market Authority via data.gov.sg",
+      "title": "Annual electricity generation fuel mix, 2005–June 2021",
+      "url": "https://data.gov.sg/datasets/d_dec34f3ed7daeb6429c8d8b7c36852d2/view",
+      "source_type": "api",
+      "publication_date": null,
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "tested",
+      "notes": "Historical dataset; show its reporting period separately from download date.",
+      "endpoint_url": "https://data.gov.sg/api/action/datastore_search?resource_id=d_dec34f3ed7daeb6429c8d8b7c36852d2",
+      "verified_at": "2026-10-05T19:49:46+00:00",
+      "license": "Singapore Open Data Licence",
+      "dataset_id": "d_dec34f3ed7daeb6429c8d8b7c36852d2"
+    },
+    {
+      "id": 9,
+      "publisher": "Energy Market Authority via data.gov.sg",
+      "title": "Peak system demand, 2005–July 2021",
+      "url": "https://data.gov.sg/datasets/d_926d3e304c0b41e56d4cbd3304acf105/view",
+      "source_type": "api",
+      "publication_date": null,
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "tested",
+      "notes": "Historical dataset; show its reporting period separately from download date.",
+      "endpoint_url": "https://data.gov.sg/api/action/datastore_search?resource_id=d_926d3e304c0b41e56d4cbd3304acf105",
+      "verified_at": "2026-10-05T19:49:46+00:00",
+      "license": "Singapore Open Data Licence",
+      "dataset_id": "d_926d3e304c0b41e56d4cbd3304acf105"
+    },
+    {
+      "id": 10,
+      "publisher": "National Environment Agency via data.gov.sg",
+      "title": "Carbon intensity of electricity generation, 2007–2013",
+      "url": "https://data.gov.sg/datasets/d_bc140b67a8708ba19c39d69182893f31/view",
+      "source_type": "api",
+      "publication_date": null,
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "none",
+      "verification_status": "tested",
+      "notes": "Historical dataset; show its reporting period separately from download date.",
+      "endpoint_url": "https://data.gov.sg/api/action/datastore_search?resource_id=d_bc140b67a8708ba19c39d69182893f31",
+      "verified_at": "2026-10-05T19:49:46+00:00",
+      "license": "Singapore Open Data Licence",
+      "dataset_id": "d_bc140b67a8708ba19c39d69182893f31"
+    },
+    {
+      "id": 11,
+      "publisher": "Fingrid",
+      "title": "Electricity consumption in Finland, dataset 124",
+      "url": "https://data.fingrid.fi/en/datasets/124",
+      "source_type": "api",
+      "publication_date": null,
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "api_key",
+      "verification_status": "tested",
+      "notes": "Authenticated latest-consumption endpoint verified on 2026-10-05. National quarter-hour average; includes minor estimates. The API key is a server secret and is not stored here.",
+      "dataset_id": "124",
+      "auth_header": "x-api-key",
+      "documentation_url": "https://data.fingrid.fi/en/instructions",
+      "license": "Creative Commons Attribution",
+      "endpoint_url": "https://data.fingrid.fi/api/datasets/124/data/latest",
+      "verified_at": "2026-10-05T20:27:02.537673+00:00"
+    },
+    {
+      "id": 12,
+      "publisher": "Fingrid",
+      "title": "Electricity production emission estimate, dataset 266",
+      "url": "https://data.fingrid.fi/en/datasets/266",
+      "source_type": "api",
+      "publication_date": null,
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "api_key",
+      "verification_status": "documented",
+      "notes": "National data. Server key and exact authenticated endpoint confirmation pending.",
+      "dataset_id": "266",
+      "auth_header": "x-api-key",
+      "documentation_url": "https://data.fingrid.fi/en/instructions",
+      "license": "Creative Commons Attribution"
+    },
+    {
+      "id": 13,
+      "publisher": "Fingrid",
+      "title": "Electricity production forecast, dataset 241",
+      "url": "https://data.fingrid.fi/en/datasets/241",
+      "source_type": "api",
+      "publication_date": null,
+      "accessed_at": "2026-10-05T19:49:46Z",
+      "auth_type": "api_key",
+      "verification_status": "documented",
+      "notes": "National data. Server key and exact authenticated endpoint confirmation pending.",
+      "dataset_id": "241",
+      "auth_header": "x-api-key",
+      "documentation_url": "https://data.fingrid.fi/en/instructions",
+      "license": "Creative Commons Attribution"
+    }
+  ],
+  "designs": [
+    {
+      "id": 1,
+      "team_id": 1,
+      "selected_country_id": 1,
+      "it_load_mw": 20,
+      "pue": 1.25,
+      "annual_operating_hours": 8760,
+      "cooling_strategy": "Direct-to-chip GPU cooling; closed loops and dry coolers; supplemental refrigeration as required.",
+      "backup_strategy": "10-minute UPS target; N+1 standby diesel; 48-hour full-load target.",
+      "design_summary": "Phased hybrid: validate demand with leased compute before committing to a Kajaani facility.",
+      "updated_at": "2026-10-05T19:49:46Z"
+    }
+  ],
+  "metrics": [
+    {
+      "id": 1,
+      "country_id": 1,
+      "metric_name": "electricity_generation_fuel_share",
+      "category": "Fossil-free",
+      "value": 95,
+      "value_kind": "reported",
+      "unit": "%",
+      "geographic_scope": "Finland (national domestic production)",
+      "reporting_period": "2024",
+      "source_id": 4,
+      "retrieved_at": "2026-10-05T19:49:46Z",
+      "confidence": "medium",
+      "notes": "2024 domestic electricity production. Includes nuclear; not equivalent to renewable or facility-specific supply."
+    },
+    {
+      "id": 2,
+      "country_id": 1,
+      "metric_name": "electricity_generation_fuel_share",
+      "category": "Renewable",
+      "value": 57,
+      "value_kind": "reported",
+      "unit": "%",
+      "geographic_scope": "Finland (national domestic production)",
+      "reporting_period": "2024",
+      "source_id": 4,
+      "retrieved_at": "2026-10-05T19:49:46Z",
+      "confidence": "medium",
+      "notes": "2024 domestic electricity production. Not hourly procurement or this facility supply."
+    },
+    {
+      "id": 3,
+      "country_id": 3,
+      "metric_name": "electricity_generation_fuel_share",
+      "category": "Natural Gas",
+      "value": 94,
+      "value_kind": "reported",
+      "unit": "%",
+      "geographic_scope": "Singapore",
+      "reporting_period": "2024",
+      "source_id": 5,
+      "retrieved_at": "2026-10-05T19:49:46Z",
+      "confidence": "medium",
+      "notes": "2024 national fuel mix. Separate from the older data.gov.sg series."
+    },
+    {
+      "id": 4,
+      "country_id": 3,
+      "metric_name": "electricity_generation_capacity",
+      "category": "Total",
+      "value": 12445,
+      "value_kind": "reported",
+      "unit": "MW",
+      "geographic_scope": "Singapore",
+      "reporting_period": "2024",
+      "source_id": 5,
+      "retrieved_at": "2026-10-05T19:49:46Z",
+      "confidence": "medium",
+      "notes": "End-2024 registered generation capacity, not power available for a proposed datacenter."
+    },
+    {
+      "id": 5,
+      "country_id": 3,
+      "metric_name": "electricity_generation_carbon_intensity",
+      "category": "Grid emission factor",
+      "value": 0.402,
+      "value_kind": "reported",
+      "unit": "kgCO2/kWh",
+      "geographic_scope": "Singapore",
+      "reporting_period": "2024",
+      "source_id": 5,
+      "retrieved_at": "2026-10-05T19:49:46Z",
+      "confidence": "medium",
+      "notes": "2024 average grid emission factor. Original unit preserved; not site-specific emissions."
+    },
+    {
+      "id": 6,
+      "metric_name": "electricity_consumption",
+      "category": "",
+      "value": 9453.81,
+      "value_kind": "reported",
+      "unit": "MWh/h",
+      "geographic_scope": "Finland",
+      "reporting_period": "2026-10-05T20:00:00.000Z / 2026-10-05T20:15:00.000Z",
+      "source_timestamp": "2026-10-05T20:21:09.000Z",
+      "source_timezone": "UTC",
+      "source_record_id": "124:2026-10-05T20:00:00.000Z:2026-10-05T20:15:00.000Z",
+      "confidence": "medium",
+      "notes": "National quarter-hour average, derived from production plus imports minus exports; includes minor estimated production. Not available connection capacity for Kajaani.",
+      "country_id": 1,
+      "source_id": 11,
+      "retrieved_at": "2026-10-05T20:27:02.537673+00:00"
+    }
+  ],
+  "design_claims": [
+    {
+      "id": 1,
+      "design_id": 1,
+      "claim_text": "LUMI is located in Kajaani and provides an existing warm-water-cooling and heat-recovery example.",
+      "claim_type": "evidence",
+      "source_id": 1,
+      "status": "verified",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 2,
+      "design_id": 1,
+      "claim_text": "Fingrid reports regional connection queues; the proposed site has no confirmed connection offer.",
+      "claim_type": "evidence",
+      "source_id": 2,
+      "status": "verified",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 3,
+      "design_id": 1,
+      "claim_text": "IT design load is 20 MW, including compute, storage and IT networking.",
+      "claim_type": "assumption",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 4,
+      "design_id": 1,
+      "claim_text": "The proposed PUE target is 1.25; actual seasonal and load-dependent performance is unverified.",
+      "claim_type": "assumption",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 5,
+      "design_id": 1,
+      "claim_text": "Baseline operating time is 8,760 hours with continuous design load for the initial energy calculation.",
+      "claim_type": "assumption",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 6,
+      "design_id": 1,
+      "claim_text": "20 MW × 1.25 = 25 MW facility electrical load.",
+      "claim_type": "calculation",
+      "source_id": null,
+      "status": "calculated",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 7,
+      "design_id": 1,
+      "claim_text": "25 MW × 8,760 hours ÷ 1,000 = 219 GWh/year under continuous baseline load.",
+      "claim_type": "calculation",
+      "source_id": null,
+      "status": "calculated",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 8,
+      "design_id": 1,
+      "claim_text": "Use Kajaani, Kainuu, Finland as the main design case; compare Québec, Canada and Singapore.",
+      "claim_type": "design_decision",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 9,
+      "design_id": 1,
+      "claim_text": "Use grid primary supply, UPS and modular N+1 diesel standby generation; assess independent distribution paths.",
+      "claim_type": "design_decision",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 10,
+      "design_id": 1,
+      "claim_text": "Target 10-minute UPS support and 48-hour full-facility backup; equipment, fuel and switching studies are pending.",
+      "claim_type": "assumption",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 11,
+      "design_id": 1,
+      "claim_text": "At 25 MW, ten minutes requires 4.17 MWh delivered and 48 hours requires 1,200 MWh, before losses and reserves.",
+      "claim_type": "calculation",
+      "source_id": null,
+      "status": "calculated",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 12,
+      "design_id": 1,
+      "claim_text": "Use direct-to-chip GPU cooling, residual air cooling, closed loops and dry coolers; supplement with mechanical refrigeration when needed.",
+      "claim_type": "design_decision",
+      "source_id": 3,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 13,
+      "design_id": 1,
+      "claim_text": "Prefer no routine evaporative cooling towers; filling, maintenance, sanitation and fire water are still needed.",
+      "claim_type": "design_decision",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 14,
+      "design_id": 1,
+      "claim_text": "Plan two physically diverse external fiber routes, provisionally 100 Gbit/s each, and a separate internal GPU fabric.",
+      "claim_type": "assumption",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 15,
+      "design_id": 1,
+      "claim_text": "Purchase grid electricity and assess renewable contracts; no dedicated onsite solar, wind or gas in the initial operating case.",
+      "claim_type": "design_decision",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 16,
+      "design_id": 1,
+      "claim_text": "Pursue a phased hybrid: lease initial compute to validate demand before committing to full construction.",
+      "claim_type": "design_decision",
+      "source_id": null,
+      "status": "proposed",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 17,
+      "design_id": 1,
+      "claim_text": "Exact land, grid capacity, connection cost, upgrades and energization date remain unconfirmed.",
+      "claim_type": "unknown",
+      "source_id": null,
+      "status": "unresolved",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 18,
+      "design_id": 1,
+      "claim_text": "Actual PUE, extreme-weather cooling performance, water demand and backup reliability remain unconfirmed.",
+      "claim_type": "unknown",
+      "source_id": null,
+      "status": "unresolved",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 19,
+      "design_id": 1,
+      "claim_text": "Fiber availability, independence, latency and price remain unconfirmed.",
+      "claim_type": "unknown",
+      "source_id": null,
+      "status": "unresolved",
+      "updated_at": "2026-10-05T19:49:46Z"
+    },
+    {
+      "id": 20,
+      "design_id": 1,
+      "claim_text": "Signed university demand, productive GPU-hours, costs and ownership economics remain unconfirmed.",
+      "claim_type": "unknown",
+      "source_id": null,
+      "status": "unresolved",
+      "updated_at": "2026-10-05T19:49:46Z"
+    }
+  ]
+}

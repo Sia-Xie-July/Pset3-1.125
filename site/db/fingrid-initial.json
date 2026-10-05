@@ -1,0 +1,13 @@
+{
+  "source_id": 11,
+  "dataset_id": "124",
+  "endpoint_url": "https://data.fingrid.fi/api/datasets/124/data/latest",
+  "checked_at": "2026-10-05T20:27:02.537673+00:00",
+  "response": {
+    "datasetId": 124,
+    "startTime": "2026-10-05T20:00:00.000Z",
+    "endTime": "2026-10-05T20:15:00.000Z",
+    "value": 9453.81,
+    "modifiedAtUTC": "2026-10-05T20:21:09.000Z"
+  }
+}
