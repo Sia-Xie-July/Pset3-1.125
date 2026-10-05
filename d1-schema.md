@@ -2,7 +2,7 @@
 
 The canonical working schema is **`d1-schema.sql` in this directory**. Maintain that file for future schema changes instead of creating successive schema copies. All project changes now belong in `Pset3-1.125`. This directory's schema supersedes the earlier draft in `ps_3`.
 
-The six assignment content tables are retained, with `sessions` and `auth_limits` added for website email/password login. `site/db/schema.ts` is generated from the canonical SQL using `sync_schema.py`; append migrations and keep applied migrations immutable. Source registrations and metric imports remain separate from schema migrations.
+The six assignment content tables are retained. Registration uses the stable Sites ChatGPT user ID. Legacy `sessions`, `auth_limits` and password fields remain inactive to preserve applied migration history; the application no longer uses them. `site/db/schema.ts` is generated from the canonical SQL using `sync_schema.py`; append migrations and keep applied migrations immutable. Source registrations and metric imports remain separate from schema migrations.
 
 ## What the teammate completed
 
@@ -27,9 +27,9 @@ This is enough to proceed with schema and website work. It does not establish a 
 
 | Table | Information Stored |
 | --- | --- |
-| `users` | Website account ID, normalized unique email, display name, salted scrypt password hash, registration date, team identifier, and server-assigned role. No plaintext passwords or API keys. |
-| `sessions` | SHA-256 hash of a random login token, account reference, creation date and absolute expiry. The raw token exists only in an HttpOnly cookie. |
-| `auth_limits` | Short-lived hashed email/IP buckets used to limit authentication attempts. |
+| `users` | Stable Sites-authenticated user ID, registration date, team identifier and server-assigned role. New registrations store no passwords. Legacy email/name/hash fields are inactive; email does not link identities or grant permissions. |
+| `sessions` | Legacy session storage, inactive after restoring Sites authentication. Old cookies are ignored. |
+| `auth_limits` | Legacy authentication-limit storage, inactive; authentication is handled by Sites. |
 | `countries` | Finland, Canada, and Singapore; candidate region such as Kainuu or Québec. |
 | `sources` | Citation details, dataset ID, documentation URL, confirmed request/download URL, license, authentication method, verification status, and refresh outcome. |
 | `metrics` | One numerical observation per row, with category, unit, value classification, geography, reporting period, original timestamp, source linkage, retrieval time, confidence, and definition notes. |
@@ -79,4 +79,4 @@ API numbers may arrive as strings. Parse and validate finite numeric values befo
 - Calculate facility load and baseline annual energy from the current design inputs. Refresh any stored explanatory calculation claims when their inputs change.
 - Backend identity, role, and team checks are still required; schema constraints do not implement authorization.
 
-Indexes support metric lookup, design-claim retrieval, unique account identities/emails and expiry cleanup. Node.js built-in crypto implements scrypt; no new authentication dependency is installed. Password hashing uses N=16384, r=8, p=5, a random salt, and timing-safe comparison. HTTPS sessions use Secure, HttpOnly, SameSite=Lax cookies. New accounts always receive viewer access; email ownership is not verified and never grants team privileges. Reset-password/email verification delivery is not connected in this initial framework.
+Indexes support metric lookup, design-claim retrieval and unique authenticated identities. Sign in with ChatGPT establishes identity; server-side D1 lookups establish registration and permissions. Anonymous protected requests return 401, signed-in unregistered requests return 403, and only registered project editors can refresh evidence. New registrations always receive viewer access and no automatic team privileges. Legacy accounts are not linked by email; existing design/evidence data and applied migrations are preserved.

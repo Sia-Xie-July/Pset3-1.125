@@ -1,5 +1,6 @@
 -- Canonical working schema for Pset3-1.125. Maintain this file for schema changes.
--- Retains the assignment's six content tables and adds website account/session storage.
+-- Registers Sites-authenticated identities; legacy password/session fields are inactive.
+-- Legacy storage is retained for applied migration compatibility, not used by the application.
 -- Schema only: source registrations and observations belong in separate seed/import data.
 -- Published 2026-10-05. Generate site/db/schema.ts via sync_schema.py and append migrations.
 -- Once deployed, keep applied migrations immutable and append new migrations.
