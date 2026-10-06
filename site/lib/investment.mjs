@@ -84,3 +84,10 @@ export function model(raw={},option='build',scenario='base') {
  return {option,scenario,opening,fullGPU,gpu,itMW,demand,rows,preOpeningCash,preOpeningMemberCash:before.reduce((n,r)=>n+r.memberCash,0),annualOperatingCost:first.opex,capitalAtRisk,npvCost:pv('resourceCost'),costPerGPUHour:pv('resourceCost')/pv('productiveHours'),totalCost:sum('resourceCost'),totalInterest:sum('interest'),totalMemberCash:sum('memberCash'),terminalDebt:debt,totalProductiveHours:sum('productiveHours'),unusedCapacityCost:first.unusedGPUHours/(gpu*a.hours*a.availability||1)*(first.staff+first.maintenance+(facility+grid)/20+fleet/a.replacementYears)};
 }
 export function compare(raw={}) {return ['base','delay','half'].flatMap(s=>['build','lease','hybrid'].map(o=>model(raw,o,s)));}
+export function adviserComparison(raw={}) {
+ const inputs=validateInputs(raw), results=compare(inputs);
+ return {currency:'EUR',price_basis:'Constant 2026 EUR',verified_site_quotes:[],cloud_reference:{source_id:14,price:inputs.leaseUSD,currency:'USD',unit:'per billed GPU-hour',eur_per_usd_assumption:inputs.eurPerUSD,note:'The published reference is USD, not EUR; model costs convert it to EUR and include efficiency and storage/network allowances.'},power_model:'20 MW is full-build IT capacity at defaults, not constant consumption. Operating power depends on productive utilization plus the assumed idle-power floor. Hybrid uses a fraction of full-build capacity.',delay_scenario:'One extra year before owned infrastructure opens; demand is served by cloud rental during the delay.',ranking_basis:'Lowest discounted resource cost over the same 10-year service horizon; excludes financing flows and terminal value',scenarios:['base','delay','half'].map(scenario=>{
+  const ranked=results.filter(r=>r.scenario===scenario).sort((a,b)=>a.npvCost-b.npvCost);
+  return {scenario,full_fleet_productive_utilization:inputs.utilization*(scenario==='half'?.5:1),lowest_cost_option:ranked[0].option,options_ranked_by_cost:ranked.map(r=>({option:r.option,resource_npv_eur:r.npvCost,eur_per_productive_gpu_hour:r.costPerGPUHour,capital_at_risk_eur:r.capitalAtRisk,opening_year:r.opening}))};
+ })};
+}

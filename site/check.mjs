@@ -1,5 +1,13 @@
 import { historyInput, validateTool, validateAnswer, runAgent } from './lib/adviser.mjs';
 import assert from 'node:assert/strict';
+import { sourcePresentation, countrySnapshotNote } from './lib/source-status.mjs';
+assert(!countrySnapshotNote(2,null,null).includes('Fingrid'));
+assert(countrySnapshotNote(2,null,null).includes('Hydro-Québec'));
+assert(countrySnapshotNote(2,{reporting_period:'2026-10-06'},null).includes('[S6]'));
+assert(countrySnapshotNote(1,null,null).includes('inactive'));
+for(const id of [9,10,12,13])assert(sourcePresentation({id}).mode.includes('inactive'));
+assert.equal(sourcePresentation({id:6}).mode,'Enabled backend dataset');
+assert.equal(sourcePresentation({id:1,notes:'reviewed'}).notes,'reviewed');
 import { readFileSync } from 'node:fs';
 import { access, energy, hydroRecords, singaporeRecords, fingridRecords } from './lib/core.mjs';
 assert.deepEqual(energy(20,1.25,8760),{facility_mw:25,annual_gwh:219});

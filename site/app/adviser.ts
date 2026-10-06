@@ -1,5 +1,5 @@
 import { env } from 'cloudflare:workers';
-import { compare } from '../lib/investment.mjs';
+import { adviserComparison, ASSUMPTIONS } from '../lib/investment.mjs';
 import { database, queryApprovedSource, investmentInputs } from './data';
 import { energy } from '../lib/core.mjs';
 import { MODEL, runAgent, historyInput } from '../lib/adviser.mjs';
@@ -45,7 +45,7 @@ export async function advise(userId:number,question:string,rawHistory:unknown) {
   async function execute(name:string,a:any):Promise<any> {
     switch(name) {
       case 'get_design':return getDesign();
-      case 'get_investment_analysis':{const saved=await investmentInputs();return {classification:'Unquoted planning assumptions and deterministic estimates; not a verified demand forecast',...saved,results:compare(saved.inputs).map(({rows,...summary}:any)=>summary),sources:await withSources([{source_id:14},{source_id:15},{source_id:16},{source_id:17}]),limitations:'Constant real EUR, no terminal value, equivalent workloads assumed, resource NPV excludes finance; inspect /investment for definitions.'};}
+      case 'get_investment_analysis':{const saved=await investmentInputs();return {classification:'Planning assumptions and deterministic estimates; not a verified demand forecast or vendor quote',updated_at:saved.updated_at,input_assumptions:ASSUMPTIONS.map(([key,label,,, ,note]:any)=>({label,value:saved.inputs[key],note})),...adviserComparison(saved.inputs),sources:await withSources([{source_id:14},{source_id:15},{source_id:16},{source_id:17}]),limitations:'S14 is an observed cloud reference rate, S15 a hardware reference, S16 market context and S17 survey guidance. They do not verify the assumed facility/GPU capex, site tariff, utilization or model rankings. Inspect /investment for definitions.'};}
       case 'get_country_metrics':return savedMetrics(a.country,a.metric_names);
       case 'get_design_claims':{
         const rows=await db.prepare('SELECT * FROM design_claims WHERE design_id=1 ORDER BY id LIMIT 60').all<any>();

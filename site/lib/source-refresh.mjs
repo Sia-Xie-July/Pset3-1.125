@@ -10,8 +10,11 @@ export async function persistRefresh(db,id,country,loader,now=new Date().toISOSt
   });
   writes.push(db.prepare("UPDATE sources SET last_refresh_at=?,last_refresh_status='succeeded',last_refresh_error=NULL WHERE id=?").bind(now,id));
   await db.batch(writes);return records.length;
- } catch {
-  await db.prepare("UPDATE sources SET last_refresh_at=?,last_refresh_status='failed',last_refresh_error='The source could not be retrieved or validated. Last valid observations retained.' WHERE id=?").bind(now,id).run();
+ } catch (error) {
+  const status=/^Source request failed \(HTTP (\d{3})\)$/.exec(error.message||'');
+  const detail=status?`The provider returned HTTP ${status[1]}.`:['TimeoutError','AbortError'].includes(error.name)?'The provider request timed out.':'The source could not be retrieved or validated.';
+  console.warn('source_refresh_failed',{source_id:id,error:error.name,message:error.message});
+  await db.prepare("UPDATE sources SET last_refresh_at=?,last_refresh_status='failed',last_refresh_error=? WHERE id=?").bind(now,`${detail} Last valid observations retained.`,id).run();
   throw Error('Refresh failed; last valid data retained');
  }
 }

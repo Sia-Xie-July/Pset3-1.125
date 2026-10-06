@@ -43,6 +43,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ act
     const messages:Record<string,[number,string]>={
       invalid_input:[400,'Please check the supplied values and required fields.'],
       forbidden:[403,'This action requires project team permissions.'],
+      'Refresh failed; last valid data retained':[503,'Dataset refresh failed. See the source status for details. Last valid data is retained.'],
       invalid_history:[400,'Conversation history is invalid or too large. Start a new conversation.'],
       adviser_not_configured:[503,'The adviser is temporarily unavailable: its server credential is not configured.'],
       adviser_rate_limit:[429,'Please wait before asking again. Limits: one active request, 6 requests per 10 minutes and 40 per day. The site also has a shared daily limit.'],

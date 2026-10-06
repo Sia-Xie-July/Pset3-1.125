@@ -39,8 +39,9 @@ async function approvedRecords(id:number) {
   const spec=specs[id];
   if(!spec)throw Error('Source is not approved');
   if(id===11&&!env.FINGRID_API_KEY)throw Error('Fingrid key is not configured');
-  const response=await fetch(spec.url,{signal:AbortSignal.timeout(15000),redirect:'error',headers:{Accept:'application/json',...(id===11?{'x-api-key':env.FINGRID_API_KEY!}:{})}});
-  if(!response.ok)throw Error('Source request failed');
+  // Cloudflare supports manual/follow only. Reject 3xx via response.ok; never forward secrets on a redirect.
+  const response=await fetch(spec.url,{signal:AbortSignal.timeout(15000),redirect:'manual',headers:{Accept:'application/json','User-Agent':'GlobalDatacenterDesignExplorer/1.0',...(id===11?{'x-api-key':env.FINGRID_API_KEY!}:{})}});
+  if(!response.ok)throw Error(`Source request failed (HTTP ${response.status})`);
   const records=spec.parser(await response.json());
   if(records.length>1500)throw Error('Dataset exceeds initial import limit');
   return records;

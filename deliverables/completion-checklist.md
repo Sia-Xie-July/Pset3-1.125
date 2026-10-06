@@ -18,13 +18,14 @@
 - [x] Individual browser-to-D1-to-OpenAI explanation and source/API inventory.
 - [x] Local build, types, model, migration, refresh, permissions and UI checks; see test-results.md for exact scope.
 
-## External dependencies and exclusions
+## Publication, verification and submission
 
-- [ ] Publish from a Sites-enabled workspace and verify production migrations, authentication and secrets.
-- [ ] Rerun credentialed live-AI checks, including saved-design and finance questions, on the final deployed version.
-- [ ] Trusted operator assigns the first team administrator to a verified registered identity; public users cannot self-promote.
+- [x] Publish from the original Sites-enabled workspace; production migration 0003, configured secrets, authenticated administrator access and unchanged-baseline design saving verified.
+- [x] Credentialed production design/finance smoke checks performed; final finance rankings/currencies and anonymous API rejection verified. See live-review-2026-10-05.md for the semantic failures found.
+- [ ] Complete final live-AI/adversarial/rate-limit regression and resolve remaining quotation-classification/citation-fidelity failures. Step 21 is not fully verified.
+- [x] Owner-authorized first administrator provisioned for verified registered account 1; role and audit checked in production. Temporary provisioning configuration removed.
 - [ ] Enter the final website URL into the course shared submission document.
-- [ ] Presentation — excluded by user.
-- [ ] Demonstration video — excluded by user.
+- [ ] Presentation — verify the requirement against the course brief.
+- [ ] Two-minute demonstration video — recording and submission pending.
 
 Site offers, signed commitments, hardware prices and actual water/failure performance are unresolved evidence gates, not fabricated facts or zeros. The assignment permits planning assumptions; the recommendation remains conditional on these gates.
