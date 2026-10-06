@@ -2,7 +2,7 @@ import { env } from 'cloudflare:workers';
 import { adviserComparison, ASSUMPTIONS } from '../lib/investment.mjs';
 import { database, queryApprovedSource, investmentInputs } from './data';
 import { energy } from '../lib/core.mjs';
-import { MODEL, runAgent, historyInput } from '../lib/adviser.mjs';
+import { MODEL, runAgent, historyInput, sourceReferences } from '../lib/adviser.mjs';
 
 // Only this website's public design is exposed; tools cannot select private teams or tables.
 export const adviserConfigured = () => Boolean(env.OPENAI_API_KEY);
@@ -23,8 +23,8 @@ export async function advise(userId:number,question:string,rawHistory:unknown) {
   const usage={input_tokens:0,output_tokens:0,tool_calls:0};
   const sourceIds=new Set<number>();
   const sources=new Map<number,any>(), periods=new Map<number,Set<string>>(), retrievalTimes=new Map<number,Set<string>>();
-  async function withSources(records:any[],field='source_id') {
-    const ids=[...new Set(records.map(r=>r[field]).filter(Number.isInteger))] as number[];
+  async function withSources(records:any[]) {
+    const ids=sourceReferences(records) as number[];
     if(!ids.length)return [];
     const rows=await db.prepare(`SELECT id,publisher,title,url,source_type,publication_date,accessed_at,verification_status,last_refresh_at,last_refresh_status,notes FROM sources WHERE id IN (${ids.map(()=>'?').join(',')})`).bind(...ids).all<any>();
     for(const source of rows.results){sources.set(source.id,source);sourceIds.add(source.id);}
@@ -39,13 +39,13 @@ export async function advise(userId:number,question:string,rawHistory:unknown) {
   }
   async function savedMetrics(country:string,names:string[]) {
     const rows=await db.prepare(`SELECT m.*,c.name AS country FROM metrics m JOIN countries c ON c.id=m.country_id WHERE c.name=? AND m.metric_name IN (${names.map(()=>'?').join(',')}) AND ${latest} ORDER BY m.reporting_period DESC,m.id DESC LIMIT 25`).bind(country,...names).all<any>();
-    return {metrics:rows.results,sources:await withSources(rows.results),missing_metrics:names.filter(n=>!rows.results.some(r=>r.metric_name===n)),limit:25};
+    return {metrics:rows.results,sources:await withSources(rows.results),missing_metrics:names.filter(n=>!rows.results.some(r=>r.metric_name===n&&typeof r.value==='number')),limit:25};
   }
   let externalCalls=0;
   async function execute(name:string,a:any):Promise<any> {
     switch(name) {
       case 'get_design':return getDesign();
-      case 'get_investment_analysis':{const saved=await investmentInputs();return {classification:'Planning assumptions and deterministic estimates; not a verified demand forecast or vendor quote',updated_at:saved.updated_at,input_assumptions:ASSUMPTIONS.map(([key,label,,, ,note]:any)=>({label,value:saved.inputs[key],note})),...adviserComparison(saved.inputs),sources:await withSources([{source_id:14},{source_id:15},{source_id:16},{source_id:17}]),limitations:'S14 is an observed cloud reference rate, S15 a hardware reference, S16 market context and S17 survey guidance. They do not verify the assumed facility/GPU capex, site tariff, utilization or model rankings. Inspect /investment for definitions.'};}
+      case 'get_investment_analysis':{const saved=await investmentInputs();const assumptions=ASSUMPTIONS.map(([key,label,,,,note]:any)=>({label,value:saved.inputs[key],note}));return {classification:'Planning assumptions and deterministic estimates; not a verified demand forecast or vendor quote',updated_at:saved.updated_at,input_assumptions:assumptions,...adviserComparison(saved.inputs),sources:await withSources([...assumptions,{source_id:14},{source_id:15},{source_id:16},{source_id:17}]),limitations:'S14 is an observed cloud reference rate, S15 a hardware reference, S16 market context and S17 survey guidance. They do not verify the assumed facility/GPU capex, site tariff, utilization or model rankings. Inspect /investment for definitions.'};}
       case 'get_country_metrics':return savedMetrics(a.country,a.metric_names);
       case 'get_design_claims':{
         const rows=await db.prepare('SELECT * FROM design_claims WHERE design_id=1 ORDER BY id LIMIT 60').all<any>();

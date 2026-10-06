@@ -31,3 +31,15 @@ Comparable datacenter counts/capacity, selected-site hourly climate/extreme cond
 ## Remaining verification and submission
 
 Production role assignment to another person, reviewed-evidence addition and finance saving were not performed using disposable real identities or invented evidence. Their local acceptance tests passed previously. The complete final production adversarial/rate-limit regression suite has not been rerun. Agent citation fidelity and quotation classification require further evaluation and correction; warnings are not evidence that the underlying generated claim is correct. Record and submit the two-minute demonstration video and submit the published URL to the course document. Verify any separate presentation requirement against the course brief.
+
+
+## Step 21–23 follow-up (later on 5 October, New York)
+
+Version 13 was published successfully at `2026-10-06T02:23:42.777839+00:00` (10:23 p.m. New York), source `f2b373f6960acb00c9d72b83417a4c2e566feb45`, environment revision 4. This supersedes the version-12 Step 21 failures above for the tested cases.
+
+The final local real-AI run passed all six requests, with consistent D1-backed citation identifiers, correct original USD versus computed EUR costs, explicit absence of verified site procurement quotes, saved-PUE propagation, missing-data recognition and ignored malicious source/history instructions. Protected refresh, request limits, editor/admin actions and failure-state UI checks passed too. Detailed test environments and the twelve Step 22 cases are in test-results.md; raw successful answers are in step-21-23-live-answers.json. Prompt-injection and mutating identity/design fixtures were confined to local D1 and restored; this is not a claim that those destructive fixtures ran on production.
+
+
+Final version 14 published at `2026-10-06T02:31:33.260728+00:00`, source `e59734f7ea036141f897fa53aca96aaf1e67a031`, environment revision 4. The extra production review exposed a mixed-scope original D1 claim: Fingrid’s national information had been combined with our lack of a verified site offer and marked evidence. The exact original record is now unknown/unresolved; LUMI’s example has explicit site limitations. Read-only production D1 inspection confirmed both corrections. Local repeat-run checks preserve later editor modifications.
+
+All final local Step 22/23 cases passed again (six real AI answers, 29,278 input / 1,425 output tokens). Public production/anonymous/spoofed-identity/origin checks passed on version 14. Request 10 answered the current PUE/energy and LUMI context correctly but missed parts of a compound question and left uncertainty empty, so it is not a full semantic pass. Focused real production request 11 correctly described absent grid offers/capacity, contextual national evidence, LUMI limitations and the proposal’s non-construction-ready status, with real S1/S2 links, uncertainty entries and no citation warning. Proof is saved as step-21-23-production.txt/png. These results supersede the older pending local adviser checks above; production destructive fixtures and course/video submission remain outside this run.

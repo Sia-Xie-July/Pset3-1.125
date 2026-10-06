@@ -3,6 +3,7 @@ import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import {persistRefresh} from './lib/source-refresh.mjs';
 import {singaporeRecords} from './lib/core.mjs';
+import {correctSeedClaims} from './lib/claim-corrections.mjs';
 const sql=new DatabaseSync(':memory:');sql.exec(readFileSync('../d1-schema.sql','utf8'));
 sql.exec("INSERT INTO countries(id,name) VALUES(3,'Singapore'); INSERT INTO sources(id,publisher,title,url,source_type,accessed_at) VALUES(8,'EMA','test','https://example.com','api','2026-10-06')");
 function stmt(query){let args=[];return {bind(...v){args=v;return this;},run(){return sql.prepare(query).run(...args);}};}
@@ -22,3 +23,18 @@ await persistRefresh(db,8,3,async()=>singaporeRecords({...raw,result:{total:1,re
 assert.equal(sql.prepare('SELECT count(*) AS n FROM metrics').get().n,2);
 assert.equal(sql.prepare('SELECT last_refresh_at FROM sources').get().last_refresh_at,'2026-10-06T03:00:00Z');
 console.log('PASS: real SQLite transaction, successful append, refresh timestamp, injected timeout and invalid batch preserve last valid data.');
+const seed=JSON.parse(readFileSync('db/seed.json','utf8'));
+sql.exec("INSERT INTO designs(id,team_id,it_load_mw,pue,annual_operating_hours,updated_at) VALUES(1,1,20,1.25,8760,'test')");
+sql.prepare('INSERT INTO design_claims(id,design_id,claim_text,claim_type,source_id,status,updated_at) VALUES(2,1,?,\'evidence\',8,\'verified\',\'old\')').run('Fingrid reports regional connection queues; the proposed site has no confirmed connection offer.');
+// The wrong source must be left untouched, then the real original is corrected once.
+await db.batch(correctSeedClaims(db,seed.design_claims,'new'));
+assert.equal(sql.prepare('SELECT claim_type FROM design_claims WHERE id=2').get().claim_type,'evidence');
+sql.exec("INSERT INTO sources(id,publisher,title,url,source_type,accessed_at) VALUES(2,'Fingrid','context','https://example.com/context','report','2026-10-06'); UPDATE design_claims SET source_id=2 WHERE id=2");
+await db.batch(correctSeedClaims(db,seed.design_claims,'new'));
+assert.equal(sql.prepare('SELECT claim_type FROM design_claims WHERE id=2').get().claim_type,'unknown');
+await db.batch(correctSeedClaims(db,seed.design_claims,'later'));
+assert.equal(sql.prepare('SELECT updated_at FROM design_claims WHERE id=2').get().updated_at,'new');
+sql.exec("UPDATE design_claims SET claim_text='Editor reviewed connection evidence',claim_type='evidence' WHERE id=2");
+await db.batch(correctSeedClaims(db,seed.design_claims,'later'));
+assert.equal(sql.prepare('SELECT claim_text FROM design_claims WHERE id=2').get().claim_text,'Editor reviewed connection evidence');
+console.log('PASS: mixed-scope claim correction is idempotent and preserves reviewed edits and different sources.');

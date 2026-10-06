@@ -1,3 +1,4 @@
+import { correctSeedClaims } from '../lib/claim-corrections.mjs';
 import { persistRefresh } from '../lib/source-refresh.mjs';
 import { env } from 'cloudflare:workers';
 import seed from '../db/seed.json';
@@ -22,6 +23,8 @@ export async function ensureSeed() {
         statements.push(db.prepare(`INSERT INTO ${table} (${columns.join(',')}) VALUES (${columns.map(() => '?').join(',')}) ON CONFLICT(id) DO NOTHING`).bind(...Object.values(row)));
       }
     }
+    // Correct only the original mixed-scope claims; preserve later editor changes.
+    statements.push(...correctSeedClaims(db,seed.design_claims,new Date().toISOString()));
     statements.push(db.prepare('INSERT INTO model_settings(id,inputs_json,updated_at) VALUES(1,?,?) ON CONFLICT(id) DO NOTHING').bind(JSON.stringify(DEFAULTS),new Date().toISOString()));
     await db.batch(statements);
     // Bootstrap a bounded set of approved, key-free datasets once; future refreshes require an editor.

@@ -22,7 +22,7 @@
 
 - [x] Publish from the original Sites-enabled workspace; production migration 0003, configured secrets, authenticated administrator access and unchanged-baseline design saving verified.
 - [x] Credentialed production design/finance smoke checks performed; final finance rankings/currencies and anonymous API rejection verified. See live-review-2026-10-05.md for the semantic failures found.
-- [ ] Complete final live-AI/adversarial/rate-limit regression and resolve remaining quotation-classification/citation-fidelity failures. Step 21 is not fully verified.
+- [x] Step 21–23 final local acceptance passed: real AI provenance/classification, saved-PUE update, source/history injection, protected refresh, failure retention, management permissions and rate-limit boundary. See test-results.md for environment scope; production smoke verification is recorded separately.
 - [x] Owner-authorized first administrator provisioned for verified registered account 1; role and audit checked in production. Temporary provisioning configuration removed.
 - [ ] Enter the final website URL into the course shared submission document.
 - [ ] Presentation — verify the requirement against the course brief.

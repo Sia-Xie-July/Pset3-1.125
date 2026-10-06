@@ -17,6 +17,7 @@ con=sqlite3.connect(paths[0]);con.row_factory=sqlite3.Row
 user=dict(con.execute("SELECT * FROM users WHERE authenticated_user_id='local_seedy'").fetchone())
 design=dict(con.execute('SELECT * FROM designs WHERE id=1').fetchone());claims=[dict(r) for r in con.execute("SELECT * FROM design_claims WHERE design_id=1 AND (claim_type='calculation' OR id IN (3,4,5))")];settings=[dict(r) for r in con.execute('SELECT * FROM model_settings')]
 start_audit=con.execute('SELECT coalesce(max(id),0) FROM project_audit').fetchone()[0]
+source6=dict(con.execute('SELECT * FROM sources WHERE id=6').fetchone())
 new_source=None;target=None
 try:
  con.execute("UPDATE users SET role='viewer',team_id=NULL WHERE id=?",(user['id'],));con.commit()
@@ -48,6 +49,15 @@ try:
  assert request('/api/assign-role',{'user_id':target,'role':'team_admin'})[0]==400
  assert con.execute('SELECT count(*) FROM project_audit WHERE id>?',(start_audit,)).fetchone()[0]>=4
  assert request('/api/refresh',{'source_id':999})[0]==400
+ # Shared loader failure/retention is fault-tested in check_refresh.mjs; verify the UI renders that retained state too.
+ observation=con.execute("SELECT value FROM metrics WHERE source_id=6 AND value IS NOT NULL ORDER BY reporting_period DESC,id DESC LIMIT 1").fetchone()
+ assert observation,'Run check_runtime.py first to populate the approved Québec feed'
+ count=con.execute('SELECT count(*) FROM metrics WHERE source_id=6').fetchone()[0]
+ con.execute("UPDATE sources SET last_refresh_status='failed',last_refresh_error='Acceptance simulated provider timeout; last valid observations retained.' WHERE id=6");con.commit()
+ assert 'Acceptance simulated provider timeout' in request('/evidence')[1]
+ assert format(int(observation[0]),',') in request('/country-comparison')[1]
+ assert con.execute('SELECT count(*) FROM metrics WHERE source_id=6').fetchone()[0]==count
+ print('PASS: failed-refresh notice renders while the last valid Québec observation stays visible.')
  print('PASS: public pages, authentication, viewer/editor/admin restrictions, saved PUE/calculation, saved finance, reviewed evidence, role boundaries and audit records.')
 finally:
  con.execute('UPDATE designs SET '+','.join(k+'=?' for k in design)+' WHERE id=1',list(design.values()))
@@ -59,5 +69,6 @@ finally:
   con.execute('DELETE FROM design_claims WHERE source_id=?',(new_source,));con.execute('DELETE FROM sources WHERE id=?',(new_source,))
  con.execute('DELETE FROM project_audit WHERE id>?',(start_audit,))
  if target:con.execute('DELETE FROM users WHERE id=?',(target,))
+ con.execute('UPDATE sources SET '+','.join(k+'=?' for k in source6)+' WHERE id=6',list(source6.values()))
  con.execute('UPDATE users SET role=?,team_id=? WHERE id=?',(user['role'],user['team_id'],user['id']));con.commit();con.close()
  request('/signout-with-chatgpt?return_to=%2F')

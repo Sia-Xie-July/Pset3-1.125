@@ -1,4 +1,4 @@
-import { historyInput, validateTool, validateAnswer, runAgent } from './lib/adviser.mjs';
+import { historyInput, validateTool, validateAnswer, runAgent, compileAnswer, answerSchema, sourceReferences } from './lib/adviser.mjs';
 import assert from 'node:assert/strict';
 import { sourcePresentation, countrySnapshotNote } from './lib/source-status.mjs';
 assert(!countrySnapshotNote(2,null,null).includes('Fingrid'));
@@ -47,6 +47,14 @@ assert.throws(()=>validateTool('query_approved_external_source',{source_id:11,ur
 assert.throws(()=>validateTool('get_country_metrics',{country:'Finland',metric_names:["x') OR 1=1--"]}));
 assert.throws(()=>validateTool('calculate_energy',{it_load_mw:20,pue:0.8,operating_hours:8760}));
 const grounded={answer:'Local example [S1]',evidence_used:[1],assumptions:[],calculations:[],design_decisions:[],uncertainties:[]};
+const statementAnswer={statements:[{kind:'evidence',text:'Local example',source_ids:[1]}]};
+assert.deepEqual(sourceReferences([{source_id:14,note:'Cooling reference [S3] and hardware [S15]'}]),[14,3,15]);
+assert.deepEqual(answerSchema(new Set([1,3])).properties.statements.items.properties.source_ids.items.enum,[1,3]);
+assert.equal(answerSchema(new Set()).properties.statements.items.properties.source_ids.maxItems,0);
+const classified=compileAnswer({statements:[{kind:'evidence',text:'Published USD price',source_ids:[14]},{kind:'assumption',text:'Unquoted EUR tariff',source_ids:[]},{kind:'calculation',text:'Hybrid is lowest NPV',source_ids:[]}]},new Set([14]));
+assert.deepEqual(classified.evidence_used,[14]);assert.deepEqual(classified.assumptions,['Unquoted EUR tariff']);assert.deepEqual(classified.calculations,['Hybrid is lowest NPV']);assert.equal(classified.citation_warnings.length,0);
+const unsupported=compileAnswer({statements:[{kind:'evidence',text:'Missing provenance [S999]',source_ids:[999]}]},new Set([1]));
+assert(unsupported.answer.includes('Missing provenance'));assert(!unsupported.answer.includes('[S999]'));assert.deepEqual(unsupported.evidence_used,[]);assert.equal(unsupported.uncertainties.length,1);assert(unsupported.citation_warnings.length);
 assert.deepEqual(validateAnswer({...grounded},new Set([1])).evidence_used,[1]);
 const uncertain=validateAnswer({...grounded,answer:'Unknown [S999]'},new Set([1]));
 assert.equal(uncertain.answer,'Unknown [S999]');assert.deepEqual(uncertain.unverified_source_ids,[999]);assert(uncertain.citation_warnings.length>0);assert(!uncertain.evidence_used.includes(999));
@@ -59,7 +67,7 @@ const output=await runAgent({key:'test-only',question:'PUE 1.4?',history:[],cont
  const body=JSON.parse(opts.body);assert.equal(url,'https://api.openai.com/v1/responses');assert.equal(body.store,false);assert.equal(body.text.format.strict,true);
  rounds++;if(rounds===1)return Response.json({status:'completed',usage:{input_tokens:5,output_tokens:2},output:[{type:'function_call',name:'calculate_energy',call_id:'call_test',arguments:JSON.stringify({it_load_mw:20,pue:1.4,operating_hours:8760})}]});
  assert.equal(JSON.parse(body.input.at(-1).output).annual_gwh,245.28);
- return Response.json({status:'completed',usage:{input_tokens:10,output_tokens:4},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(grounded)}]}]});
+ return Response.json({status:'completed',usage:{input_tokens:10,output_tokens:4},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(statementAnswer)}]}]});
 }});
 assert.equal(executed,1);assert.equal(output.answer,grounded.answer);assert.deepEqual(usage,{input_tokens:15,output_tokens:6,tool_calls:1});
 console.log('PASS: controlled tool arguments, conversation trust boundary, real citation enforcement, structured Responses tool loop and accumulated token audit.');
@@ -67,8 +75,8 @@ console.log('PASS: controlled tool arguments, conversation trust boundary, real 
 let modelCalls=0;
 const unverified=await runAgent({key:'test-only',question:'Source?',history:[],context:{},sourceIds:new Set([1]),usage:{input_tokens:0,output_tokens:0,tool_calls:0},execute:async()=>assert.fail('No tools expected'),fetcher:async()=>{
  modelCalls++;
- return Response.json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({...grounded,answer:'Unverified reference [S999]',evidence_used:[999]})}]}]});
+ return Response.json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({statements:[{kind:'evidence',text:'Unverified reference [S999]',source_ids:[999]}]})}]}]});
 }});
-assert.equal(modelCalls,1);assert.equal(unverified.answer,'Unverified reference [S999]');
+assert.equal(modelCalls,1);assert(unverified.answer.includes('Unverified reference'));assert(!unverified.answer.includes('[S999]'));
 assert.deepEqual(unverified.evidence_used,[]);assert.deepEqual(unverified.unverified_source_ids,[999]);assert(unverified.citation_warnings.length>0);
-console.log('PASS: citation problems return the original answer immediately, with warnings and no invented source links.');
+console.log('PASS: typed classifications, embedded source retrieval, server-rendered citation IDs; unsupported prose stays visible with warnings and no invented links.');

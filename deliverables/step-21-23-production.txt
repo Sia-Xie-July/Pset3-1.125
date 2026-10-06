@@ -1,0 +1,61 @@
+GLOBAL DATACENTER DESIGN EXPLORER
+
+Ask the Adviser
+
+Discuss the design using the current evidence and clearly labelled assumptions.
+
+Initial concept
+Datacenter Design Adviser
+AI connected
+
+The adviser evaluates this initial design using stored evidence, calculations and source citations. It distinguishes proposals from verified information.
+
+Answers use the current D1 design and controlled evidence tools. Supporting sources, assumptions and uncertainties are shown with each answer.
+
+Signed in as Tong Zhou · team_admin
+
+Why is Kajaani the proposed location?
+What changes if PUE rises to 1.40?
+Which evidence could reverse the recommendation?
+Your question
+Ask the Adviser
+New conversation
+
+Up to 6 requests per 10 minutes and 40 per day, subject to a shared site limit. Conversation stays in this tab; request metadata and token counts are recorded.
+
+Your question
+
+Has this proposal received a verified site-specific grid connection offer and firm capacity? Can you certify it as construction-ready? Explain what is still unknown, without inferring our site capacity from national forecasts.
+
+Answer
+
+No verified site-specific connection offer, firm capacity, upgrade cost or energization date is stored for this proposal; Fingrid’s national outlook is only contextual evidence, not confirmation for the proposed Kajaani site. [S2]
+
+Exact land, grid capacity, connection cost, upgrades and energization date remain unconfirmed for the Kajaani facility design.
+
+LUMI in Kajaani offers an example of warm-water cooling and heat recovery but does not establish grid capacity, water supply, fiber routes or cooling performance for the proposed new facility. [S1]
+
+The proposal is a phased hybrid design that validates demand with leased compute before committing to building the Kajaani facility, indicating it is not yet construction-ready.
+
+Evidence used
+[S2] Fingrid: Electricity consumption and connection outlook · Original source
+Publication: 2026-08-18 · Accessed: 2026-10-05T19:49:46Z · Saved refresh: never
+[S1] LUMI: LUMI FAQ · Original source
+Publication: not stated · Accessed: 2026-10-05T19:49:46Z · Saved refresh: never
+Assumptions
+
+None identified in this answer.
+
+Calculations
+
+None identified in this answer.
+
+Design decisions
+The proposal is a phased hybrid design that validates demand with leased compute before committing to building the Kajaani facility, indicating it is not yet construction-ready.
+Uncertainty
+No verified site-specific connection offer, firm capacity, upgrade cost or energization date is stored for this proposal; Fingrid’s national outlook is only contextual evidence, not confirmation for the proposed Kajaani site. [S2]
+Exact land, grid capacity, connection cost, upgrades and energization date remain unconfirmed for the Kajaani facility design.
+
+gpt-4.1-mini-2025-04-14 · 2,771 input / 192 output tokens · 0 tool calls · Request 11
+
+The adviser concerns an initial design concept and cannot issue engineering certification. Missing or conflicting evidence must be identified explicitly.
