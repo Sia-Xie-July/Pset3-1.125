@@ -1,7 +1,8 @@
-import { ensureSeed, database, refreshSource, snapshot } from '../../data';
+import { ensureSeed, database, refreshSource } from '../../data';
 import { registeredAccount } from '../../auth';
 import { getChatGPTUser } from '../../chatgpt-auth';
 import { access } from '../../../lib/core.mjs';
+import { advise } from '../../adviser';
 export const dynamic = 'force-dynamic';
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 export async function POST(request: Request, { params }: { params: Promise<{ action: string }> }) {
@@ -16,7 +17,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ act
   let body: any;
   try {
     const text = await request.text();
-    if (text.length > 5000) return json({ error: 'Request is too large.' }, 413);
+    if (text.length > 16000) return json({ error: 'Request is too large.' }, 413);
     body = JSON.parse(text);
     if (!body || typeof body !== 'object' || Array.isArray(body)) throw Error();
   } catch { return json({ error: 'Invalid JSON request.' }, 400); }
@@ -35,8 +36,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ act
       return json({ updated_records: await refreshSource(body.source_id) });
     }
     if (typeof body.question !== 'string' || !body.question.trim() || body.question.length > 2000) return json({ error: 'Enter a question of 1–2,000 characters.' }, 400);
-    // Authentication is active; model calls remain disabled pending server-side credentials.
-    const data = await snapshot();
-    return json({ error: 'The AI adviser is not connected yet. Your account is active; current evidence is available on the Evidence page.', available_source_count: data.sources.length }, 503);
-  } catch { return json({ error: 'The service is temporarily unavailable. Saved data is retained.' }, 503); }
+    return json(await advise(account!.id,body.question.trim(),body.history));
+  } catch(error:any) {
+    const messages:Record<string,[number,string]>={
+      invalid_history:[400,'Conversation history is invalid or too large. Start a new conversation.'],
+      adviser_not_configured:[503,'The adviser is temporarily unavailable: its server credential is not configured.'],
+      adviser_rate_limit:[429,'Please wait before asking again. Limits: one active request, 6 requests per 10 minutes and 40 per day. The site also has a shared daily limit.'],
+      openai_quota_or_rate_limit:[503,'The AI provider is temporarily rate-limited or has insufficient credit. Please try later.'],
+      openai_authentication_failed:[503,'The server AI credential needs attention. Please contact the project team.'],
+      citation_validation_failed:[502,'The adviser returned unsupported citations. The answer was withheld; please try again.'],
+    };
+    const [status,message]=messages[error.message]||[503,'The adviser could not complete a verified answer. Please try again. Saved data is retained.'];
+    return Response.json({error:message},{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...(status===429?{'Retry-After':'60'}:{})}});
+  }
 }

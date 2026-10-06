@@ -15,6 +15,13 @@
       "when": 1791231547876,
       "tag": "0001_hot_the_santerians",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791246386948,
+      "tag": "0002_dapper_betty_ross",
+      "breakpoints": true
     }
   ]
 }

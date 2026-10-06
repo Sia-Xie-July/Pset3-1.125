@@ -121,3 +121,22 @@ export const design_claims = sqliteTable('design_claims', {
   check('design_claims_check_4', sql.raw("status <> 'verified' OR claim_type = 'evidence'")),
   index('idx_claims_design').on(t.design_id),
 ]);
+export const adviser_requests = sqliteTable('adviser_requests', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  user_id: integer('user_id').notNull().references(() => users.id),
+  created_at: integer('created_at').notNull(),
+  completed_at: integer('completed_at'),
+  status: text('status').notNull().default(sql.raw("'pending'")),
+  model: text('model').notNull(),
+  input_tokens: integer('input_tokens').notNull().default(sql.raw('0')),
+  output_tokens: integer('output_tokens').notNull().default(sql.raw('0')),
+  tool_calls: integer('tool_calls').notNull().default(sql.raw('0')),
+  error_code: text('error_code'),
+}, (t) => [
+  check('adviser_requests_check_1', sql.raw("status IN ('pending','succeeded','failed')")),
+  check('adviser_requests_check_2', sql.raw('input_tokens >= 0')),
+  check('adviser_requests_check_3', sql.raw('output_tokens >= 0')),
+  check('adviser_requests_check_4', sql.raw('tool_calls >= 0')),
+  index('idx_adviser_time').on(t.created_at),
+  index('idx_adviser_user_time').on(t.user_id, t.created_at),
+]);

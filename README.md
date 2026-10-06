@@ -9,7 +9,7 @@ All future project changes belong in this directory.
 
 The public Site is published at https://global-datacenter-design-explorer.tong-zhou.chatgpt.site. Source code is in `site/`; see `site/README.md` for local setup, architecture, checks and remaining limits. Cloudflare D1 backs site data and application registrations after Sign in with ChatGPT. Applied migration history must remain immutable.
 
-The Fingrid key is stored in ignored `site/.dev.vars` locally and as a production Sites Secret. Never put its value in D1, Git, browser code or this documentation. Dataset 124 consumption is connected; carbon/forecast endpoint verification and the OpenAI adviser remain pending.
+The Fingrid and OpenAI keys are stored in ignored `site/.dev.vars` locally and as a production Sites Secret. Never put its value in D1, Git, browser code or this documentation. Dataset 124 consumption is connected; carbon/forecast endpoint verification remains pending. The AI adviser now uses a server-side OpenAI Responses request with controlled D1/API tools, real source citations, registration checks and request limits. See `site/README.md` for Steps 18–21.
 
 ## Repository layout
 

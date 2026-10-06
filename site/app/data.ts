@@ -25,13 +25,28 @@ export async function ensureSeed() {
   })().catch(error => { initialized = null; throw error; });
   return initialized;
 }
-export async function refreshSource(id: number) {
-  const specs: Record<number, { url: string; country: number; parser: (value: any) => any[] }> = {
+const specs: Record<number, { url: string; country: number; parser: (value: any) => any[] }> = {
     6: { url: 'https://www.hydroquebec.com/data/documents-donnees/donnees-ouvertes/json/demande.json', country: 2, parser: body => hydroRecords(body) },
     7: { url: 'https://www.hydroquebec.com/data/documents-donnees/donnees-ouvertes/json/production.json', country: 2, parser: body => hydroRecords(body, true) },
     8: { url: 'https://data.gov.sg/api/action/datastore_search?resource_id=d_dec34f3ed7daeb6429c8d8b7c36852d2', country: 3, parser: singaporeRecords },
     11: { url: 'https://data.fingrid.fi/api/datasets/124/data/latest', country: 1, parser: fingridRecords },
   };
+async function approvedRecords(id:number) {
+  const spec=specs[id];
+  if(!spec)throw Error('Source is not approved');
+  if(id===11&&!env.FINGRID_API_KEY)throw Error('Fingrid key is not configured');
+  const response=await fetch(spec.url,{signal:AbortSignal.timeout(15000),redirect:'error',headers:{Accept:'application/json',...(id===11?{'x-api-key':env.FINGRID_API_KEY!}:{})}});
+  if(!response.ok)throw Error('Source request failed');
+  const records=spec.parser(await response.json());
+  if(records.length>1500)throw Error('Dataset exceeds initial import limit');
+  return records;
+}
+export async function queryApprovedSource(id:number) {
+  const records=await approvedRecords(id),retrieved_at=new Date().toISOString();
+  const latestPeriod=records.map(r=>r.reporting_period).sort().at(-1);
+  return {retrieved_at,records:records.filter(r=>r.reporting_period===latestPeriod).slice(0,15).map(r=>({...r,country_id:specs[id].country,source_id:id,retrieved_at})),limitation:'Read-only live check; does not update the saved dataset.'};
+}
+export async function refreshSource(id: number) {
   const spec = specs[id];
   if (!spec) throw Error('Source is not enabled for refresh');
   const db = database(), now = new Date().toISOString();
@@ -39,10 +54,7 @@ export async function refreshSource(id: number) {
     if(id===11&&!env.FINGRID_API_KEY)throw Error('Fingrid key is not configured');
     // ponytail: timestamp throttle handles sequential edits; concurrent isolates may still receive provider 429, retaining old data.
     if(id===11){const source=await db.prepare('SELECT last_refresh_at FROM sources WHERE id=11').first<any>();if(source?.last_refresh_at&&Date.now()-Date.parse(source.last_refresh_at)<2000)throw Error('Fingrid refresh is throttled');}
-    const response = await fetch(spec.url, { signal: AbortSignal.timeout(15000), headers: { Accept: 'application/json', ...(id===11 ? {'x-api-key':env.FINGRID_API_KEY!} : {}) } });
-    if (!response.ok) throw Error('Source request failed');
-    const records = spec.parser(await response.json());
-    if (records.length > 1500) throw Error('Dataset exceeds initial import limit');
+    const records = await approvedRecords(id);
     const writes = records.map(record => {
       const data = { ...record, country_id: spec.country, source_id: id, retrieved_at: now };
       const columns = Object.keys(data);

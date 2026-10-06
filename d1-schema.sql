@@ -134,6 +134,22 @@ ON metrics(country_id, metric_name);
 CREATE INDEX idx_claims_design
 ON design_claims(design_id);
 
+-- Atomic AI request reservations and metadata-only audit; no questions or answers.
+CREATE TABLE adviser_requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    created_at INTEGER NOT NULL,
+    completed_at INTEGER,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','succeeded','failed')),
+    model TEXT NOT NULL,
+    input_tokens INTEGER NOT NULL DEFAULT 0 CHECK (input_tokens >= 0),
+    output_tokens INTEGER NOT NULL DEFAULT 0 CHECK (output_tokens >= 0),
+    tool_calls INTEGER NOT NULL DEFAULT 0 CHECK (tool_calls >= 0),
+    error_code TEXT
+);
+CREATE INDEX idx_adviser_user_time ON adviser_requests(user_id, created_at);
+CREATE INDEX idx_adviser_time ON adviser_requests(created_at);
+
 -- The UNIQUE authenticated_user_id already has an index.
 PRAGMA optimize;
 

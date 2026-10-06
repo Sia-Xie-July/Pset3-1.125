@@ -47,3 +47,5 @@ next-env.d.ts
 
 # Local backend secrets
 /.dev.vars*
+
+*.tsbuildinfo

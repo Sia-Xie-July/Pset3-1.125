@@ -35,6 +35,7 @@ This is enough to proceed with schema and website work. It does not establish a 
 | `metrics` | One numerical observation per row, with category, unit, value classification, geography, reporting period, original timestamp, source linkage, retrieval time, confidence, and definition notes. |
 | `designs` | Current IT load, PUE, annual operating hours, selected country, cooling, backup, and summary. |
 | `design_claims` | Evidence, assumptions, calculations, design decisions, and unknowns supplied to the website and AI. |
+| `adviser_requests` | Atomic rate-limit reservations and 30-day metadata-only audit: user ID, UTC epoch timestamps, status, model, input/output tokens, tool count and sanitized error code. Questions and answers are not stored. |
 
 ## Additions needed for these sources
 
@@ -80,3 +81,9 @@ API numbers may arrive as strings. Parse and validate finite numeric values befo
 - Backend identity, role, and team checks are still required; schema constraints do not implement authorization.
 
 Indexes support metric lookup, design-claim retrieval and unique authenticated identities. Sign in with ChatGPT establishes identity; server-side D1 lookups establish registration and permissions. Anonymous protected requests return 401, signed-in unregistered requests return 403, and only registered project editors can refresh evidence. New registrations always receive viewer access and no automatic team privileges. Legacy accounts are not linked by email; existing design/evidence data and applied migrations are preserved.
+
+## AI adviser request limits
+
+`adviser_requests` is introduced by the appended migration `site/drizzle/0002_dapper_betty_ross.sql`. A conditional `INSERT ... SELECT ... RETURNING id` reserves a request atomically: one active request per user (120-second reservation window), 6 requests per 10 minutes, 40 per UTC day, and 200 requests per UTC day across the site. Failed requests also count; no model call occurs when a reservation is rejected. Two timestamp indexes support these checks. Audit metadata expires after 30 days.
+
+The five adviser tools expose only the current public team-1 design, bounded country metrics, design claims, deterministic energy arithmetic and four fixed approved API feeds. The model cannot submit SQL, arbitrary URLs, credentials, or edits. The tool's team ID is **1** for this website; the assignment's team ID 4 is an illustrative example. Source IDs in final answers must match records actually retrieved from `sources`; unsupported citations cause the answer to be withheld.
