@@ -140,3 +140,19 @@ export const adviser_requests = sqliteTable('adviser_requests', {
   index('idx_adviser_time').on(t.created_at),
   index('idx_adviser_user_time').on(t.user_id, t.created_at),
 ]);
+export const model_settings = sqliteTable('model_settings', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  inputs_json: text('inputs_json').notNull(),
+  updated_at: text('updated_at').notNull(),
+}, (t) => [
+  check('model_settings_check_1', sql.raw('id = 1')),
+]);
+export const project_audit = sqliteTable('project_audit', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  user_id: integer('user_id').notNull().references(() => users.id),
+  action: text('action').notNull(),
+  details: text('details').notNull(),
+  created_at: text('created_at').notNull(),
+}, (t) => [
+  index('idx_project_audit_time').on(t.created_at),
+]);

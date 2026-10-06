@@ -1,69 +1,57 @@
-# Investment Memo for a University AI Datacenter
+# Investment recommendation for shared university AI computing
 
-**To:** University Consortium Investment Committee | October 5, 2026
+University Consortium Investment Committee | 6 October 2026 | Planning study in constant 2026 EUR
+
 
 ## Recommendation
 
-We recommend a phased hybrid approach: secure bounded leased compute for initial workloads while validating a Kajaani facility, and defer the full 25 MW construction commitment. Members have no signed long-term compute commitments, and the utility has not confirmed connection cost or timing. This is a conditional recommendation, not a demonstrated cost advantage. Retain build-and-own, lease, and hybrid options in the financial comparison; the committee should approve evidence gathering and return the construction proposal for further evidence.
+Approve a capped diligence and leased-compute pilot in Finland; return the 25 MW construction proposal for more evidence. Retain Kajaani and a conditional 10 MW-facility hybrid phase as the working hypothesis. The hybrid has the lowest modeled base-case cost, but leasing wins when demand halves. No institution has signed demand commitments and no utility offer or equipment quote has been established.
 
-## Baseline and initial design assumptions
 
-Retain the assignment baseline for comparison; it does not establish that demand justifies 25 MW. All proposed equipment and service capacities below are unverified targets.
+## Demand and options
 
-| Variable | Initial value | Status |
-| --- | --- | --- |
-| IT load | 20 MW | Assumed computing, storage and IT networking load |
-| PUE | 1.25 | Assumed target, not measured performance |
-| Facility electrical load | 25 MW | Calculated from IT load and PUE |
-| Annual operating hours | 8,760 hours | 365-day planning basis |
-| Annual facility electricity | 219 GWh | Calculated assuming continuous baseline load |
+Retain 20 MW IT × PUE 1.25 = 25 MW total facility load as the full-build comparison. A 1.4 kW/GPU-equivalent IT allowance implies 14,280 GPUs. At 97% scheduling availability and assumed 25% productive utilization, demand is 30.34 million useful GPU-hours/year. This is an illustrative forecast, not surveyed demand. The hybrid installs 5,712 GPU equivalents (about 8 MW IT / 10 MW facility).
 
-**Location.** Kajaani, Kainuu, Finland, for a hypothetical Finnish university consortium; exact land and access are unsecured. Compare Canada (Québec) and Singapore. Existing LUMI cooling and heat recovery inform the concept [S1], without proving new capacity is available.
+All options serve the same demand over years 1–10. Full build opens in year 3; hybrid opens in year 4; both lease capacity before opening and for overflow. Grid delay moves owned opening one year later. Half utilization reduces demand by half while retaining idle power and fixed costs. GPU purchases wait until the year before actual opening; replacement occurs after four operating years.
 
-**Grid.** Grid primary supply; assess two routes and separate distribution paths against the largest electrical failure. Voltage, ratings and independence need utility confirmation. Regional queues make energization uncertain [S2].
 
-**Backup.** Target 10-minute UPS protection for IT and necessary cooling, then diesel generation. Remaining generator capacity after the largest unit fails must cover 25 MW. A 48-hour full-load target requires 1,200 MWh delivered; the conservative UPS basis is 4.17 MWh before losses and reserves. Fuel volume, permits and reliability are unverified.
+## Required financial comparison
 
-**Cooling and water.** Direct-to-chip GPU liquid cooling, residual air cooling, closed loops, dry coolers and supplemental air-cooled refrigeration when required. Redundant pumps and modules need thermal validation [S3]. Avoid routine cooling towers; filling, makeup, sanitation and fire-water needs remain unquantified. No zero-water claim or heat-sale revenue is assumed.
+Opex is the first owned-operation year, or year 1 for lease. Useful-hour cost discounts resource costs and delivered hours at 6%. Pre-opening cash includes capital, bridge operating costs and interest, before debt draw. Capital risk is unrecoverable initial capital plus pre-opening operating costs/interest and three-month cloud cancellation exposure; it is not added again to NPV.
 
-**Network and electricity.** Assume two diverse external fiber routes, provisionally 100 Gbit/s each, plus an internal GPU fabric sized to workloads. Grid supply includes nuclear and renewables [S4]; assess renewable contracts. Assume no dedicated onsite solar, wind or gas generation. Annual procurement does not establish hourly renewable supply.
 
-## Three findings most likely to change the recommendation
+## Assumptions and limitations
 
-### Finding 1 Contracted demand justifies owned capacity
+Unquoted allowances: facility €10m/IT MW; grid €15m full build (proportional for hybrid); installed GPU/host/fabric/storage €40,000 per GPU; electricity €0.10/kWh; idle IT 35% of nameplate. Staffing €3m/year at full scale, facility maintenance/insurance 2% and IT support 3% of capex. Cloud: observed $3.99/GPU-hour [S14], assumed €0.92/$, 85% useful/billed efficiency and 10% storage/network uplift. Large-cluster availability and workload equivalence are unverified; test the published $5.54 cluster rate as well.
 
-Signed, funded member commitments establish productive GPU-hours, workload timing, security and availability needs. Demand exceeding what accessible existing facilities can supply could support construction; weak or intermittent demand favors leasing or a smaller phase. Set a build threshold using the cost model rather than an invented utilization cutoff.
 
-### Finding 2 A viable grid offer and reliable design are secured
+## Technical concept and failure response
 
-A site-specific offer confirms usable capacity, upgrades, price and energization. Electrical failure analysis and equipment evidence establish cooling continuity, water service, fiber diversity and the 48-hour backup target. Timely, affordable access supports building; delay, shared failure points or costly upgrades favor relocation, leasing or deferral.
+Kajaani uses grid power, direct-to-chip cooling for compatible servers, closed loops, dry coolers and supplemental refrigeration [S1, S3]. Two independent 25 MW electrical paths are proposed: losing one must leave 25 MW usable. Six site-rated 5 MW generators leave 25 MW after one fails. Ten-minute UPS energy is 4.17 MWh delivered, or at least 5.79 MWh nameplate assuming 90% efficiency and 80% end-of-life capacity. For 48 hours at 25 MW, 1,200 MWh requires an assumed 345,000 litres diesel at 0.25 L/kWh plus 15% reserve. None of these assumptions proves uptime; verify topology, switching, fuel, cooling continuity, permits and integrated tests. A second generator failure requires at least 5 MW load shedding, prioritizing essential services over training.
 
-### Finding 3 The ten year comparison changes the preferred option
+Propose six 5 MW cooling trains with one spare, two diverse 100 Gbit/s external links, workload-sized internal fabric and 5 PB usable storage. Water demand, actual PUE, tariff, grid date and site capacity remain unknown. No solar/wind energy, heat revenue or zero-water benefit is credited. Hourly energy and site water studies are required; annual national electricity shares do not establish site emissions.
 
-Comparable quotes and a ten-year cash-flow model show whether ownership beats lease or hybrid at agreed service levels. Separate facility and GPU costs, including construction, grid upgrades, electricity, staffing, maintenance, finance, replacement and unused capacity. A durable advantage could justify building; competitive existing compute or expensive renewal favors leasing.
 
-## Required stress cases and investment exposure
+## Financing and governance
 
-**Base case.** Assume the baseline load for initial engineering comparison, but forecast energy from actual load profiles. Operating continuously does not imply full productive utilization. GPU models, numbers and commitments remain unresolved.
+Diligence equity precedes binding commitments. Construction debt requires funded member reservations, land/permits, a grid offer, bounded EPC cost and independent engineering review. Equipment finance follows energization milestones and acceptance benchmarks. Illustrative finance is 50% initial-capex debt, 4% real interest, eight operating-year principal installments; replacement is member-funded. The online model shows interest, equity cash and outstanding year-10 debt separately. Resource NPV excludes financing and credits no terminal resale, tax shields or grants; these are conservative conventions, not unknown measurements entered as zero.
 
-**Grid power one year late.** Defer full opening and assess temporary leased compute. Model extra financing, holding and interim-compute costs and delayed revenue. Avoid assuming a year of operation on standby generators; keep GPU purchases tied to energization.
+If approved, a consortium nonprofit owns the facility and shared IT, contracting construction, operations, power and support. One institution one board vote; publish reservation fees and metered variable charges. Allocate 60% research, 25% teaching, 15% inference initially; protect small-institution access and cap routine reservations by a single member at 30% unless openly approved. Release unused reservations to a common pool. Members fund their committed fixed costs; exit payments cover noncancelable obligations. Equity bears uninsured delay/shortfall; credit utility/EPC compensation only when contracted.
 
-**GPU utilization halved.** Reduce forecast productive GPU-hours by half. With unchanged annual cost, unit cost doubles; actual costs need a separate idle-power and cooling model. Lower demand may require a smaller build phase.
 
-**Engineering sensitivity.** If PUE reaches 1.40, 20 MW IT requires 28 MW facility power. At a fixed 25 MW limit, supported IT falls to about 17.9 MW. Test summer conditions, equipment compatibility and failure operation; the uptime target still requires consortium agreement.
+## Three findings most likely to reverse the decision
 
-**Decision evidence still needed.** For each scenario, report pre-opening cash, annual operating cost, cost per productive GPU-hour and capital at risk. These monetary results are not yet established. Obtain quotes and the cash-flow model before construction approval; report nonrecoverable spending and contractual exposure explicitly.
+1. Contracted demand and alternatives. A pilot and signed funded commitments establish useful hours, concurrency and service levels beyond what existing academic or commercial facilities can supply. CSC offers eligible academic LUMI access [S17], but sufficient allocation and software fit are unverified. At half demand, modeled leasing costs €4.79/useful hour versus €6.17 for hybrid.
 
-**Conditional ownership plan.** If building is later justified, the consortium should own the facility and shared infrastructure, procure GPUs in phases, and contract utility supply, specialist construction and appropriate operating services. Allocate delay and withdrawal risk in contracts before debt or equipment commitments.
+2. Utility and engineering feasibility. A binding offer establishes connection capacity, cost and date; equipment and integrated failure studies establish cooling, water, fiber diversity and backup capability. A delayed hybrid increases modeled cost to €4.35/useful hour. A shared failure path, costly upgrades or permitting constraint can favor lease or relocation.
 
-## Evidence references
+3. Comparable delivered-compute prices. Competitive quotes, benchmarked productivity, cloud availability and GPU renewal prices change the ranking. Compare Canada/Québec and Singapore as well as Kajaani: annual electricity statistics differ in scope, Québec projects ≥5 MW require authorization [S20], and Singapore’s hot humid climate affects cooling [S19]. Do not select a country from an unsupported composite score.
 
-[[S1] LUMI FAQ](https://lumi-supercomputer.eu/faq/) Kajaani warm-water cooling and heat recovery; page undated.
 
-[[S2] Fingrid connection outlook](https://www.fingrid.fi/en/news/news/2026/electricity-consumption-is-set-to-increase-sharply--more-balancing-power-will-also-be-needed/) August 18, 2026; regional connection queues.
+## Evidence and approval request
 
-[[S3] DOE data center design guide](https://www.energy.gov/sites/default/files/2024-07/best-practice-guide-data-center-design.pdf) July 2024; cooling and electrical design guidance.
+Approve only a capped 8–12 week pilot and diligence budget agreed by members. No full build or phase procurement until the three gates above pass. Sources and complete assumptions are linked in the website Evidence and Decision dossier pages. Reference numbers identify D1 source records; exact site facts and quotations remain unresolved.
 
-[[S4] Statistics Finland electricity production](https://stat.fi/en/publication/cm1hs1qfy32tf07w5nzls9o0b) 2024 data: 95% fossil-free, 57% renewable domestic production; not site supply.
+[S1] LUMI FAQ, lumi-supercomputer.eu/faq/ · [S3] DOE/FEMP data center design guide (2024), energy.gov · [S14] Lambda pricing, lambda.ai/pricing · [S17] CSC LUMI service, research.csc.fi/service/lumi-supercomputer/ · [S19] Singapore climate, weather.gov.sg/climate-climate-of-singapore/ · [S20] Québec connection authorization, quebec.ca. Public sources reviewed 5–6 October 2026.
 
-Sources accessed October 5, 2026. Assumptions are not verified site performance.
+Numerical scenario rows and full annual cash flows: [financial-results.json](deliverables/financial-results.json).

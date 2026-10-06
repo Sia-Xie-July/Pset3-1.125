@@ -9,7 +9,7 @@ Requires Node.js >=22.13.0 and Python 3.
 ```sh
 npm ci
 npm run build
-node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 migrations apply DB --local --config dist/server/wrangler.json --persist-to .wrangler/state
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 migrations apply DB --local --config wrangler.local.json --persist-to .wrangler/state
 npm run dev
 ```
 
@@ -50,7 +50,7 @@ The canonical schema is `../d1-schema.sql`. Edit that file, then run `python3 sy
 
 Singapore historical fuel-mix data is imported from a key-free API; its 2021 records cover January–June, not the full year. Hydro-Québec demand and generation imports are enabled, with failure status shown if retrieval is unavailable. These provincial snapshots do not establish site-specific connection capacity. Fingrid dataset 124 latest consumption is enabled using a server-side `FINGRID_API_KEY`; its national quarter-hour averages retain MWh/h units and UTC timestamps. A verified initial observation is included with its retrieval date, followed by a first-load refresh on a new database. Carbon/forecast feeds remain pending endpoint verification. Its key does not replace an OpenAI key.
 
-There are no API keys in source or browser code. Local Cloudflare secrets use ignored `site/.dev.vars` with owner-only file permissions. Production uses Sites runtime Secrets. D1 records only the public endpoint and credential requirement, never the key. Both `FINGRID_API_KEY` and `OPENAI_API_KEY` are configured as separate server secrets. The browser sends only a question and up to two previous question/answer pairs; server-side instructions and current records take precedence over this untrusted history.
+There are no API keys in source or browser code. Local Cloudflare secrets use ignored `site/.dev.vars` with owner-only file permissions. Production uses Sites runtime Secrets. D1 records only the public endpoint and credential requirement, never the key. The original deployment used separate `FINGRID_API_KEY` and `OPENAI_API_KEY` server secrets. A fresh checkout does not contain them; configure the existing authorized credentials through runtime secrets to run live integrations. The browser sends only a question and up to two previous question/answer pairs; server-side instructions and current records take precedence over this untrusted history.
 
 Account pages: `/register`, `/login`, `/account`. Anonymous requests receive 401; signed-in users without a D1 registration receive 403; registered viewers can reach the adviser endpoint but cannot refresh evidence. The platform handles authentication; no app-owned login, logout or callback endpoint is implemented.
 
@@ -73,7 +73,7 @@ python3 check_runtime.py http://127.0.0.1:5173
 | --- | --- | --- |
 | `get_design` | `{"team_id":1}` | Current team-1 D1 proposal, update date and baseline energy arithmetic. |
 | `get_country_metrics` | `{"country":"Finland","metric_names":["electricity_consumption"]}` | Up to 25 latest saved records per source/category, units, dates, scope, source records, limitations and missing metric names. Finland, Canada and Singapore only; up to 8 metric names. |
-| `get_design_claims` | `{"design_id":1}` | Up to 30 classified claims and their real source records. |
+| `get_design_claims` | `{"design_id":1}` | Up to 60 classified claims and their real source records. |
 | `calculate_energy` | `{"it_load_mw":20,"pue":1.25,"operating_hours":8760}` | Deterministic 25 MW / 219 GWh results, input assumptions and formulas; no D1 edits. |
 | `query_approved_external_source` | `{"source_id":11}` | Read-only server fetch of source 6, 7, 8 or 11 using fixed official URLs. At most 15 records from the latest reporting period. On failure, returns last valid saved observations with dates and a failure indication. Viewer requests never refresh or overwrite D1 metrics. |
 
@@ -88,3 +88,26 @@ Limits: one pending request per user (120-second reservation window); 6 requests
 `node check.mjs` checks tool boundaries, invalid conversation roles, deterministic calculations, advisory warnings for invented/missing citations and a mocked two-round Responses tool exchange. `npx tsc --noEmit` checks types. `python3 check_runtime.py http://127.0.0.1:5173` requires a configured local OpenAI secret and makes five small real model requests using local mock sign-in. It temporarily isolates its test registration, restores original source notes and cleans up only its own request metadata.
 
 All five live requests passed for the initial integration. A subsequent user-requested change makes citation discrepancies advisory; unit checks verify the original answer is returned immediately and unknown IDs are never linked. The runtime check covers anonymous/unregistered denial, client permission spoofing, origin checks, a grounded Kajaani/LUMI answer with real D1 citations, an injected instruction in source notes, a PUE-1.40 calculation (28 MW / 245.28 GWh), country metrics with missing evidence, an approved read-only external-source check, refusal to certify an unknown water requirement, token audit and rate limiting. Production sign-in remains the Sites platform's responsibility; local mock checks do not impersonate production identities.
+
+
+## Completion work on 6 October 2026
+
+- `/investment`: shared-demand 10-year build/lease/hybrid model, nine required option/scenario results, annual capital/operating/debt/member cash flows and editable assumptions. Default base case prefers a conditional 8 MW IT phase; half-demand prefers lease. Quotes and commitments remain unknown.
+- `/decision`: sourced three-country assessment, workload/service/security requirements, quantified reference failure analysis, ownership/finance/governance, approval gates and downloadable deliverables.
+- `/evidence`: search and classification filters. `/manage`: reviewed evidence addition for team-1 editors; design/finance saving and role assignment for team-1 administrators. Public registration remains viewer-only.
+- `get_investment_analysis`: adviser tool returns deterministic scenarios using current saved inputs. Citation warnings from the latest upstream change are preserved.
+- `db/research.json`: incremental source/claim/NULL-metric bundle inserted idempotently without rewriting existing records. Model settings and management audit use appended migration `0003_project_management.sql`. Initial source insertion is separate from schema migration.
+
+Run `node check_investment.mjs`, `node check_refresh.mjs` and (with local preview running) `python3 -B check_management.py`, in addition to the existing checks. See `../deliverables/test-results.md` for what was actually tested and what remains blocked. The current workspace's Sites connector is disabled, so these changes are local and not yet published.
+
+### First administrator
+
+A trusted database operator must first verify a registered person's stable identity and numeric `users.id`. Set that single account to `role='team_admin', team_id=1` through the authorized database administration channel; record the authorization outside the app. Do not choose an identity from a browser-supplied email, automatically promote the first user, or expose a public bootstrap endpoint. Once provisioned, that administrator can assign editor/admin roles on `/manage`; self-demotion and cross-team reassignment are rejected. The administrator UI does not list all identities, and users can share their own numeric ID from `/account`.
+
+### Financial model conventions
+
+`lib/investment.mjs` is the calculation source of truth. Financial inputs are planning allowances, not sourced quotes unless explicitly stated. Numerical missing site evidence stays NULL in `metrics`. PUE, IT MW and hours come from the saved design; financial settings cannot override them. The model uses constant 2026 EUR, a common ten-year service horizon and leased bridging before owned facilities open. Resource NPV excludes financing flows; separate member cash includes draws, interest and principal, with remaining debt disclosed. Terminal value, grants, tax shields and heat revenue are explicitly excluded rather than estimated. Member payments cover costs; there is no profit projection. See the inline controls for all formulas/bases and `../deliverables/financial-methodology.md` for limitations.
+
+### Publication handoff
+
+Use the existing project ID in `.openai/hosting.json` from a Sites-enabled workspace. Apply migration 0003 after 0002 and publish the exact tested source including `public/deliverables/`; never rewrite applied history. Retain the current audience and secrets. Verify public pages, real sign-in/registration, role denials, saved PUE, finance tools, source refresh/failure, citations and downloaded artifacts in production. Production Sites must strip untrusted identity headers. Local mock sign-in is development-only and must not be deployed as an authentication substitute.

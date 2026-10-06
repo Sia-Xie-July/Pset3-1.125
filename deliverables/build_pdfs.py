@@ -1,0 +1,85 @@
+from pathlib import Path
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4,landscape
+from reportlab.lib.colors import HexColor
+from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,PageBreak
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.enums import TA_LEFT
+import textwrap
+root=Path(__file__).resolve().parents[1];out=root/'deliverables'
+c=canvas.Canvas(str(out/'system-diagram.pdf'),pagesize=landscape(A4));W,H=landscape(A4)
+ink=HexColor('#182b43');blue=HexColor('#315c8c');red=HexColor('#9b3e35');grey=HexColor('#536174')
+c.setTitle('Kajaani reference system and failure paths')
+def label(x,y,t,size=10,color=ink):c.setFillColor(color);c.setFont('Helvetica',size);c.drawString(x,y,t)
+def box(x,y,w,h,title,lines):
+ c.setStrokeColor(HexColor('#b6c3d1'));c.setFillColor(HexColor('#f5f7fa'));c.roundRect(x,y,w,h,5,fill=1,stroke=1)
+ label(x+9,y+h-17,title,11)
+ for i,line in enumerate(lines):label(x+9,y+h-32-i*12,line,9)
+def arrow(x1,y1,x2,y2,color=blue,dash=False):
+ c.setStrokeColor(color);c.setFillColor(color);c.setLineWidth(1.4);c.setDash(4,3) if dash else c.setDash();c.line(x1,y1,x2,y2);c.setDash()
+ import math
+ a=math.atan2(y2-y1,x2-x1);p=c.beginPath();p.moveTo(x2,y2);p.lineTo(x2-7*math.cos(a-.4),y2-7*math.sin(a-.4));p.lineTo(x2-7*math.cos(a+.4),y2-7*math.sin(a+.4));p.close();c.drawPath(p,fill=1,stroke=0)
+label(32,H-35,'Kajaani reference system and failure paths',22)
+label(32,H-55,'20 MW IT / 25 MW facility | Initial concept | All equipment capacities below are planning targets',10)
+box(32,415,175,70,'Utility paths A and B',['25 MW usable per path','Separate routes and substations','Independence not established'])
+box(246,415,175,70,'Sectionalized A/B buses',['Transformers and switchgear','Isolate failed path; transfer load','One surviving path: 25 MW'])
+box(460,415,155,70,'UPS and distribution',['10-minute protected bridge','4.17 MWh delivered energy','>=5.79 MWh assumed nameplate'])
+box(654,415,155,70,'Protected loads',['20 MW IT + cooling/controls','Dual-fed IT and GPU fabric','Training / teaching / inference'])
+for a,b in [(207,246),(421,460),(615,654)]:arrow(a,450,b,450)
+box(32,307,175,70,'Standby generation',['6 x 5 MW site-rated modules','Largest unit lost: 5 x 5 = 25 MW','48-hour load: 1,200 MWh'])
+box(246,307,175,70,'Fuel and transfer',['345,000 L planning allowance','Burn 0.25 L/kWh + 15% reserve','Fuel permits and curves TBD'])
+arrow(207,342,246,342,red,True);arrow(334,377,334,415,red,True)
+label(460,381,'GRID LOSS: start generators within UPS bridge.',10,red)
+label(460,365,'Second generator loss: shed >=5 MW facility load.',10,red)
+label(460,349,'Prioritize cooling, storage and essential inference.',10,red)
+label(460,333,'Failed downstream zone: isolate and checkpoint;',10,red)
+label(460,317,'use independent zone or leased recovery service.',10,red)
+box(32,201,175,65,'Cooling from GPU cold plates',['Residual air cooling as needed','CDUs / closed loops / pumps'])
+box(246,201,175,65,'Heat rejection trains',['6 x 5 MW thermal assumed','One lost: 25 MW remaining'])
+box(460,201,155,65,'Dry coolers + refrigeration',['Summer and freeze checks','Heat reuse optional'])
+box(654,201,155,65,'Outdoor environment',['Water volume unknown','No zero-water assertion'])
+for a,b in [(207,246),(421,460),(615,654)]:arrow(a,235,b,235)
+arrow(730,415,730,281);arrow(730,281,118,281);arrow(118,281,118,266)
+box(32,100,175,65,'University network',['2 diverse 100 Gbit/s routes','One path supports essentials'])
+box(246,100,175,65,'Edge and internal fabric',['Project isolation / MFA','Benchmark 8-1,024 GPU jobs'])
+box(460,100,155,65,'Compute and storage',['5 PB usable / 50 GB/s target','Separate immutable backup'])
+box(654,100,155,65,'Leased recovery capacity',['Verify residency and SLA','Checkpointed training restart'])
+for a,b in [(207,246),(421,460),(615,654)]:arrow(a,132,b,132)
+label(32,77,'Blue: normal power/heat/data paths. Dashed red: backup/failure response. Hybrid phase must be resized and revalidated.',9)
+label(32,59,'Uptime is not demonstrated: verify protection, transfer tests, derating, fuel, cooling continuity, shared failures and permits.',9)
+label(32,42,'Basis: assignment assumptions; DOE/FEMP design guide [S3]; NVIDIA system-power reference [S15]. See Decision dossier.',9)
+c.save()
+styles=getSampleStyleSheet();styles['Title'].fontSize=20;styles['Title'].textColor=ink
+styles['BodyText'].fontName='Helvetica';styles['BodyText'].fontSize=10;styles['BodyText'].leading=14;styles['BodyText'].spaceAfter=9
+styles['Heading2'].fontSize=12;styles['Heading2'].textColor=ink
+story=[]
+def title(t):story.append(Paragraph(t,styles['Title']));story.append(Spacer(1,12))
+def h(t):story.append(Paragraph(t,styles['Heading2']))
+def p(t):story.append(Paragraph(t,styles['BodyText']))
+title('Browser to evidence to adviser')
+p('Individual request-flow explanation and submission guide | 6 October 2026')
+h('Example question')
+p('A registered user asks: “What changes if PUE rises to 1.40?” The browser sends the question and bounded conversation history to POST /api/adviser. The browser never receives the OpenAI or Fingrid key and cannot send an authoritative role or system instruction.')
+h('Identity and permission checks')
+p('Sites supplies authenticated identity headers. The server looks up the stable identity in D1 users. Anonymous callers receive 401; signed-in but unregistered callers receive 403. The endpoint also checks HTTPS, same-origin requests, JSON size and question length. A D1 reservation enforces per-user and shared request limits; failed requests still count.')
+h('Evidence and controlled tools')
+p('The server retrieves the current saved design and relevant classified claims, with real source records. It sends those records and explicit instructions to OpenAI Responses. Retrieved text and conversation history are untrusted data. Tools can retrieve approved design/metric/claim records, calculate energy, inspect the deterministic investment model, or read a fixed approved API. They accept neither arbitrary SQL nor an arbitrary URL.')
+h('Deterministic arithmetic and return path')
+p('For 20 MW IT and PUE 1.40, calculate_energy returns 28 MW and 245.28 GWh at 8,760 hours. That hypothetical calculation does not alter D1. The model returns structured answer/evidence/assumption/calculation/decision/uncertainty sections. The server validates citation identifiers against retrieved records, attaches genuine source URLs and displays warnings for citation problems, preserving the latest project behavior. Warnings are advisory: users must inspect evidence and must not treat every generated statement as verified.')
+h('Saved changes and audit')
+p('A team administrator may separately save PUE on Manage evidence. The server validates inputs, updates the design, regenerates calculation claims and writes an audit record atomically. Subsequent adviser requests read the updated D1 value. Editors can add reviewed source/claim pairs and refresh only approved APIs. Viewers cannot edit. Source refresh validates the full response before its transaction; failed retrieval retains the last valid data and records a visible failure.')
+h('Financing questions')
+p('get_investment_analysis uses current saved financial assumptions plus the saved design, returning all nine option/scenario results from application code. It labels them estimates, not quotations. The Investment model page exposes formulas, annual cash flows, assumptions and sensitivity controls. No profit, availability or professional engineering guarantee is produced.')
+story.append(PageBreak());title('Verification and submission guide')
+h('Deliverable map')
+p('Website source: site/. Model: /investment. Country research, demand, engineering, finance and governance: /decision. Evidence and timestamps: /evidence. Written memo: investment-memo.docx (two pages). Physical diagram: deliverables/system-diagram.pdf (one page). D1 schema: d1-schema.sql. Requirements: fr-table.md. Source/API inventory: d1-schema.md plus D1 sources. Numerical snapshot: deliverables/financial-results.json. Detailed current checks and commands: deliverables/test-results.md.')
+h('What the checks establish')
+p('Pure tests check arithmetic, equal delivered service across options, cash-flow identities, utilization/grid-delay stress, source parsers, tool boundaries and citation warnings. SQLite transaction tests check refresh success and failed-response retention. Local HTTP tests check authentication, viewer/editor/admin restrictions, saved design/finance, evidence insertion, and role-assignment boundaries. A production build and TypeScript checks establish that the source compiles, not that the remote deployment is current.')
+h('Production publication dependency')
+p('Sites returned “Sites is not yet enabled for this workspace” during this work. The existing live site has not been updated here. In the original Sites-enabled workspace, publish this exact source with appended migration 0003_project_management.sql, retain server-only keys, and run the same public/authenticated acceptance checks. Never rewrite applied migrations 0000–0002. Bootstrap the first administrator only through a trusted database operator after verifying that person’s registered stable identity.')
+h('Evidence that remains unknown')
+p('University commitments, site-specific connection price/date/capacity, hardware and lease guarantees, actual water demand, hourly emissions and integrated backup capability remain unknown. They are decision gates, not fabricated zero values. Financial and engineering planning allowances are explicitly separate from verified data. The model can support an approve/reject/request-more-evidence decision without claiming the site is ready for construction.')
+h('Excluded and manual submission items')
+p('The five-minute presentation and two-minute demonstration video are excluded at the user’s request. Enter the published URL into the course shared document from an authorized account after deployment. Review the individual explanation above and adapt it to your own understanding before submission.')
+SimpleDocTemplate(str(out/'submission-guide.pdf'),pagesize=A4,rightMargin=44,leftMargin=44,topMargin=40,bottomMargin=40).build(story)
+print('Created system diagram and submission guide')

@@ -192,3 +192,17 @@ PRAGMA optimize;
 -- Source verification != website integration, and reported national data != site capability.
 -- Validated refresh writes must be atomic; preserve old metrics on any failed refresh.
 -- Source refresh status/error fields record freshness but do not implement that behavior.
+
+CREATE TABLE model_settings (
+ id INTEGER PRIMARY KEY CHECK (id = 1),
+ inputs_json TEXT NOT NULL,
+ updated_at TEXT NOT NULL
+);
+CREATE TABLE project_audit (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ user_id INTEGER NOT NULL REFERENCES users(id),
+ action TEXT NOT NULL,
+ details TEXT NOT NULL,
+ created_at TEXT NOT NULL
+);
+CREATE INDEX idx_project_audit_time ON project_audit(created_at);

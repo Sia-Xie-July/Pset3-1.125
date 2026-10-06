@@ -1,5 +1,8 @@
+import { persistRefresh } from '../lib/source-refresh.mjs';
 import { env } from 'cloudflare:workers';
 import seed from '../db/seed.json';
+import research from '../db/research.json';
+import { DEFAULTS } from '../lib/investment.mjs';
 import { hydroRecords, singaporeRecords, fingridRecords } from '../lib/core.mjs';
 
 export function database() {
@@ -11,17 +14,18 @@ export async function ensureSeed() {
   if (initialized) return initialized;
   initialized = (async () => {
     const db = database();
-    if (await db.prepare('SELECT id FROM designs WHERE id = 1').first()) return;
+    const exists = await db.prepare('SELECT id FROM designs WHERE id = 1').first();
     const statements: D1PreparedStatement[] = [];
-    for (const [table, rows] of Object.entries(seed)) {
+    for (const [table, rows] of Object.entries(exists ? research : {countries:seed.countries,sources:[...seed.sources,...research.sources],designs:seed.designs,metrics:[...seed.metrics,...research.metrics],design_claims:[...seed.design_claims,...research.design_claims]})) {
       for (const row of rows as Record<string, unknown>[]) {
         const columns = Object.keys(row);
         statements.push(db.prepare(`INSERT INTO ${table} (${columns.join(',')}) VALUES (${columns.map(() => '?').join(',')}) ON CONFLICT(id) DO NOTHING`).bind(...Object.values(row)));
       }
     }
+    statements.push(db.prepare('INSERT INTO model_settings(id,inputs_json,updated_at) VALUES(1,?,?) ON CONFLICT(id) DO NOTHING').bind(JSON.stringify(DEFAULTS),new Date().toISOString()));
     await db.batch(statements);
     // Bootstrap a bounded set of approved, key-free datasets once; future refreshes require an editor.
-    await Promise.allSettled([refreshSource(6), refreshSource(7), refreshSource(8), ...(env.FINGRID_API_KEY ? [refreshSource(11)] : [])]);
+    if(!exists) await Promise.allSettled([refreshSource(6), refreshSource(7), refreshSource(8), ...(env.FINGRID_API_KEY ? [refreshSource(11)] : [])]);
   })().catch(error => { initialized = null; throw error; });
   return initialized;
 }
@@ -49,26 +53,9 @@ export async function queryApprovedSource(id:number) {
 export async function refreshSource(id: number) {
   const spec = specs[id];
   if (!spec) throw Error('Source is not enabled for refresh');
-  const db = database(), now = new Date().toISOString();
-  try {
-    if(id===11&&!env.FINGRID_API_KEY)throw Error('Fingrid key is not configured');
-    // ponytail: timestamp throttle handles sequential edits; concurrent isolates may still receive provider 429, retaining old data.
-    if(id===11){const source=await db.prepare('SELECT last_refresh_at FROM sources WHERE id=11').first<any>();if(source?.last_refresh_at&&Date.now()-Date.parse(source.last_refresh_at)<2000)throw Error('Fingrid refresh is throttled');}
-    const records = await approvedRecords(id);
-    const writes = records.map(record => {
-      const data = { ...record, country_id: spec.country, source_id: id, retrieved_at: now };
-      const columns = Object.keys(data);
-      return db.prepare(`INSERT INTO metrics (${columns.join(',')}) SELECT ${columns.map(() => '?').join(',')} WHERE NOT EXISTS (SELECT 1 FROM metrics WHERE source_id = ? AND source_record_id = ? AND category = ? AND value = ?)`)
-        .bind(...Object.values(data), id, record.source_record_id, record.category, record.value);
-    });
-    writes.push(db.prepare("UPDATE sources SET last_refresh_at=?, last_refresh_status='succeeded', last_refresh_error=NULL WHERE id=?").bind(now, id));
-    await db.batch(writes);
-    return records.length;
-  } catch {
-    await db.prepare("UPDATE sources SET last_refresh_at=?, last_refresh_status='failed', last_refresh_error='The source could not be retrieved or validated. Last valid observations retained.' WHERE id=?").bind(now, id).run();
-    throw Error('Refresh failed; last valid data retained');
-  }
+  return persistRefresh(database(),id,spec.country,()=>approvedRecords(id));
 }
+
 export async function snapshot() {
   await ensureSeed();
   const db = database();
@@ -80,4 +67,11 @@ export async function snapshot() {
     db.prepare(`SELECT m.*, c.name AS country_name, s.title AS source_title, s.url AS source_url FROM metrics m JOIN countries c ON c.id=m.country_id JOIN sources s ON s.id=m.source_id WHERE NOT EXISTS (SELECT 1 FROM metrics newer WHERE newer.source_id=m.source_id AND newer.country_id=m.country_id AND newer.metric_name=m.metric_name AND newer.category=m.category AND newer.unit=m.unit AND newer.geographic_scope=m.geographic_scope AND (newer.reporting_period > m.reporting_period OR (newer.reporting_period=m.reporting_period AND newer.id>m.id))) ORDER BY m.country_id,m.metric_name,m.category`).all<any>(),
   ]);
   return { design, countries: countries.results, sources: sources.results, claims: claims.results, metrics: metrics.results };
+}
+
+export async function investmentInputs() {
+ await ensureSeed();
+ const saved=await database().prepare('SELECT inputs_json,updated_at FROM model_settings WHERE id=1').first<any>();
+ const d=await database().prepare('SELECT it_load_mw,pue,annual_operating_hours FROM designs WHERE id=1').first<any>();
+ return {inputs:{...DEFAULTS,...(saved?JSON.parse(saved.inputs_json):{}),itMW:d.it_load_mw,pue:d.pue,hours:d.annual_operating_hours},updated_at:saved?.updated_at||null};
 }

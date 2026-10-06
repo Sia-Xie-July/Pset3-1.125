@@ -2,12 +2,13 @@ import { ensureSeed, database, refreshSource } from '../../data';
 import { registeredAccount } from '../../auth';
 import { getChatGPTUser } from '../../chatgpt-auth';
 import { access } from '../../../lib/core.mjs';
+import { manage } from '../../manage';
 import { advise } from '../../adviser';
 export const dynamic = 'force-dynamic';
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 export async function POST(request: Request, { params }: { params: Promise<{ action: string }> }) {
   const { action } = await params;
-  if (!['register', 'refresh', 'adviser'].includes(action)) return json({ error: 'Not found' }, 404);
+  if (!['register', 'refresh', 'adviser','save-design','save-finance','add-evidence','assign-role'].includes(action)) return json({ error: 'Not found' }, 404);
   const url = new URL(request.url);
   if (url.protocol !== 'https:' && !['127.0.0.1', 'localhost'].includes(url.hostname)) return json({ error: 'HTTPS is required.' }, 403);
   if (request.headers.get('Origin') !== url.origin || request.headers.get('Sec-Fetch-Site') === 'cross-site') return json({ error: 'Invalid request origin.' }, 403);
@@ -31,6 +32,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ act
     }
     const account = await registeredAccount(user.userId), status = access(user, account, action === 'refresh');
     if (status !== 200) return json({ error: !account ? 'Complete website registration to continue.' : 'Project editor access is required.' }, status);
+    if(['save-design','save-finance','add-evidence','assign-role'].includes(action))return json(await manage(action,body,account));
     if (action === 'refresh') {
       if (!Number.isInteger(body.source_id) || ![6, 7, 8, 11].includes(body.source_id)) return json({ error: 'Select an enabled source.' }, 400);
       return json({ updated_records: await refreshSource(body.source_id) });
@@ -39,6 +41,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ act
     return json(await advise(account!.id,body.question.trim(),body.history));
   } catch(error:any) {
     const messages:Record<string,[number,string]>={
+      invalid_input:[400,'Please check the supplied values and required fields.'],
+      forbidden:[403,'This action requires project team permissions.'],
       invalid_history:[400,'Conversation history is invalid or too large. Start a new conversation.'],
       adviser_not_configured:[503,'The adviser is temporarily unavailable: its server credential is not configured.'],
       adviser_rate_limit:[429,'Please wait before asking again. Limits: one active request, 6 requests per 10 minutes and 40 per day. The site also has a shared daily limit.'],

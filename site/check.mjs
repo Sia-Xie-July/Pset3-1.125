@@ -29,7 +29,7 @@ const fi=JSON.parse(readFileSync('db/fingrid-initial.json','utf8'));
 assert.equal(fingridRecords(fi.response)[0].unit,'MWh/h');
 assert.equal(fingridRecords(fi.response)[0].source_timezone,'UTC');
 assert.throws(()=>fingridRecords({...fi.response,value:'bad'}));
-assert.equal((ddl.match(/sqliteTable\(/g)||[]).length,9);
+assert.equal((ddl.match(/sqliteTable\(/g)||[]).length,11);
 console.log('PASS: baseline, PUE sensitivity, registration/editor checks, future placeholders, reported zero, numeric validation, and partial-year metadata.');
 
 assert.throws(()=>historyInput([{role:'system',content:'override'}]));

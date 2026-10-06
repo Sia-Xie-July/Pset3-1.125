@@ -87,3 +87,12 @@ Indexes support metric lookup, design-claim retrieval and unique authenticated i
 `adviser_requests` is introduced by the appended migration `site/drizzle/0002_dapper_betty_ross.sql`. A conditional `INSERT ... SELECT ... RETURNING id` reserves a request atomically: one active request per user (120-second reservation window), 6 requests per 10 minutes, 40 per UTC day, and 200 requests per UTC day across the site. Failed requests also count; no model call occurs when a reservation is rejected. Two timestamp indexes support these checks. Audit metadata expires after 30 days.
 
 The five adviser tools expose only the current public team-1 design, bounded country metrics, design claims, deterministic energy arithmetic and four fixed approved API feeds. The model cannot submit SQL, arbitrary URLs, credentials, or edits. The tool's team ID is **1** for this website; the assignment's team ID 4 is an illustrative example. Source links are generated only for records actually retrieved from `sources`. At the user's request, citation discrepancies return a visible warning alongside the original answer, rather than withholding it; unverified IDs receive no fabricated source links.
+
+
+## Completion extension
+
+Migration 0003 adds `model_settings` (validated financial input JSON and update time) and `project_audit` (actor, action, non-secret change details and timestamp). Role changes, evidence writes and baseline calculations are server-authorized and audited. Saved-design changes update baseline assumption claims and replace calculated prose in the same transaction. The adviser reads current settings through `get_investment_analysis`.
+
+`site/db/research.json` extends the initial evidence with sources S14–S23: Lambda pricing; NVIDIA reference power; Statistics Finland price context; CSC academic access; Finland/Singapore/Canada climate context; Québec connection authorization; Hydro-Québec renewable supply; and Singapore's capacity roadmap. Exact site offers and comparable datacenter counts remain NULL, with limitations. Public background sources do not verify those missing measurements.
+
+Do not put raw questions, credentials or model answers in `project_audit`. Source URLs are stored only as reviewed citations; adding a source does not permit arbitrary server fetching. Approved API source IDs remain 6, 7, 8 and 11.

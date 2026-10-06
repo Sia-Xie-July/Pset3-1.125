@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
-import { database, queryApprovedSource } from './data';
+import { compare } from '../lib/investment.mjs';
+import { database, queryApprovedSource, investmentInputs } from './data';
 import { energy } from '../lib/core.mjs';
 import { MODEL, runAgent, historyInput } from '../lib/adviser.mjs';
 
@@ -44,9 +45,10 @@ export async function advise(userId:number,question:string,rawHistory:unknown) {
   async function execute(name:string,a:any):Promise<any> {
     switch(name) {
       case 'get_design':return getDesign();
+      case 'get_investment_analysis':{const saved=await investmentInputs();return {classification:'Unquoted planning assumptions and deterministic estimates; not a verified demand forecast',...saved,results:compare(saved.inputs).map(({rows,...summary}:any)=>summary),sources:await withSources([{source_id:14},{source_id:15},{source_id:16},{source_id:17}]),limitations:'Constant real EUR, no terminal value, equivalent workloads assumed, resource NPV excludes finance; inspect /investment for definitions.'};}
       case 'get_country_metrics':return savedMetrics(a.country,a.metric_names);
       case 'get_design_claims':{
-        const rows=await db.prepare('SELECT * FROM design_claims WHERE design_id=1 ORDER BY id LIMIT 30').all<any>();
+        const rows=await db.prepare('SELECT * FROM design_claims WHERE design_id=1 ORDER BY id LIMIT 60').all<any>();
         return {claims:rows.results,sources:await withSources(rows.results)};
       }
       case 'calculate_energy':return {classification:'Hypothetical deterministic calculation; saved design unchanged',inputs:a,...energy(a.it_load_mw,a.pue,a.operating_hours),formula:'facility_mw = it_load_mw × pue; annual_gwh = facility_mw × operating_hours / 1000',limitation:'Constant load, not utilization-dependent or site-measured energy'};
@@ -64,7 +66,7 @@ export async function advise(userId:number,question:string,rawHistory:unknown) {
   }
   try {
     const design=await getDesign();
-    const claims=await db.prepare('SELECT * FROM design_claims WHERE design_id=1 ORDER BY id LIMIT 30').all<any>();
+    const claims=await db.prepare('SELECT * FROM design_claims WHERE design_id=1 ORDER BY id LIMIT 60').all<any>();
     // ponytail: small keyword ranking for initial context; controlled tools handle semantic follow-ups.
     const words=question.toLowerCase().match(/[a-z]{3,}/g)||[];
     const relevant=claims.results.map(c=>({c,score:words.filter(w=>(c.claim_text+' '+c.notes).toLowerCase().includes(w)).length})).sort((a,b)=>b.score-a.score).slice(0,6).map(x=>x.c);

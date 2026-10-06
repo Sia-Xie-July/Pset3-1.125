@@ -1,0 +1,21 @@
+import { DatabaseSync } from 'node:sqlite';
+import {readFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+import {persistRefresh} from './lib/source-refresh.mjs';
+import {singaporeRecords} from './lib/core.mjs';
+const sql=new DatabaseSync(':memory:');sql.exec(readFileSync('../d1-schema.sql','utf8'));
+sql.exec("INSERT INTO countries(id,name) VALUES(3,'Singapore'); INSERT INTO sources(id,publisher,title,url,source_type,accessed_at) VALUES(8,'EMA','test','https://example.com','api','2026-10-06')");
+function stmt(query){let args=[];return {bind(...v){args=v;return this;},run(){return sql.prepare(query).run(...args);}};}
+const db={prepare:stmt,async batch(writes){sql.exec('BEGIN');try{for(const s of writes)s.run();sql.exec('COMMIT');}catch(e){sql.exec('ROLLBACK');throw e;}}};
+const raw={success:true,result:{total:1,records:[{year:'2021',energy_products:'Gas',percentage:'95',_id:1}]}};
+await persistRefresh(db,8,3,async()=>singaporeRecords(raw),'2026-10-06T01:00:00Z');
+assert.equal(sql.prepare('SELECT value FROM metrics').get().value,95);
+await assert.rejects(()=>persistRefresh(db,8,3,async()=>{throw Error('timeout');},'2026-10-06T02:00:00Z'));
+assert.equal(sql.prepare('SELECT value FROM metrics').get().value,95);
+assert.equal(sql.prepare('SELECT last_refresh_status FROM sources').get().last_refresh_status,'failed');
+await assert.rejects(()=>persistRefresh(db,8,3,async()=>singaporeRecords({...raw,result:{total:2,records:[...raw.result.records,{year:'2021',energy_products:'Coal',percentage:'bad'}]}})));
+assert.equal(sql.prepare('SELECT count(*) AS n FROM metrics').get().n,1);
+await persistRefresh(db,8,3,async()=>singaporeRecords({...raw,result:{total:1,records:[{...raw.result.records[0],percentage:'96'}]}}),'2026-10-06T03:00:00Z');
+assert.equal(sql.prepare('SELECT count(*) AS n FROM metrics').get().n,2);
+assert.equal(sql.prepare('SELECT last_refresh_at FROM sources').get().last_refresh_at,'2026-10-06T03:00:00Z');
+console.log('PASS: real SQLite transaction, successful append, refresh timestamp, injected timeout and invalid batch preserve last valid data.');
