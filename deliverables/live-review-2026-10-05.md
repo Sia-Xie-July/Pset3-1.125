@@ -52,3 +52,11 @@ Pulled teammate commit `a266e392052a842d3c60f103a9c476ea6c79a9a5` with the publi
 Local SVG XML/labels and PDF-header checks passed. Local preview timed out and the local type/build checks stalled on dependency file reads, so those attempts were cancelled; this was not a TypeScript diagnostic. Old build output was preserved separately and was not uploaded for the new source. Sites rebuilt the exact pushed source remotely and reported successful production deployment. The teammate's earlier local checks remain historical evidence, not checks rerun successfully here. This addition changes public documentation; the prior adviser/D1 acceptance suite was not rerun for it.
 
 Final targeted production verification passed: `/architecture` returned HTTP 200 with the diagram and request walkthrough; `/deliverables/architecture-diagram.svg` and `.pdf` returned HTTP 200 with the expected MIME types and byte-for-byte matches to the teammate’s source assets.
+
+## Demonstration video — 6 October 2026
+
+Published Site version 16 from pushed source `7de41cc73afcc43b814b883cca0afad6879f3185` at `2026-10-06T20:48:35.705693+00:00`, environment revision 4. Architecture and Decision dossier now link to the user-provided Google Drive demonstration video. Connected Drive metadata confirms `pset3-video.mp4`; video duration and anonymous playback access were not independently verified, and sharing permissions were not changed.
+
+Targeted anonymous production GET checks passed: `/architecture` and `/decision` returned HTTP 200 with the exact video URL. Architecture also contains the existing “One request, explained” walkthrough and an explicit reminder that each member needs their own explanation. This confirms the public example, not individual course submissions.
+
+The local typecheck again timed out reading dependency files; local packaging could not complete. Sites remotely built the exact pushed source and reported successful deployment. This link/documentation change did not rerun paid adviser or mutating D1 tests.

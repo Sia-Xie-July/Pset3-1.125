@@ -29,6 +29,8 @@
 - [x] Owner-authorized first administrator provisioned for verified registered account 1; role and audit checked in production. Temporary provisioning configuration removed.
 - [ ] Enter the final website URL into the course shared submission document.
 - [ ] Presentation — verify the requirement against the course brief.
-- [ ] Two-minute demonstration video — recording and submission pending.
+- [x] Demonstration video recorded and supplied by the user: [pset3-video.mp4](https://drive.google.com/file/d/1A_Gr7akfuBEPiqKxJvKpkcRP76397HWV/view?usp=share_link). Duration and anonymous playback remain unverified.
+- [ ] Submit the video and confirm the instructor can access it.
+- [ ] Each member submits their own short browser → D1 → OpenAI → response explanation; the worked example is available on `/architecture#request-trace`.
 
 Site offers, signed commitments, hardware prices and actual water/failure performance are unresolved evidence gates, not fabricated facts or zeros. The assignment permits planning assumptions; the recommendation remains conditional on these gates.
