@@ -44,7 +44,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ act
       adviser_rate_limit:[429,'Please wait before asking again. Limits: one active request, 6 requests per 10 minutes and 40 per day. The site also has a shared daily limit.'],
       openai_quota_or_rate_limit:[503,'The AI provider is temporarily rate-limited or has insufficient credit. Please try later.'],
       openai_authentication_failed:[503,'The server AI credential needs attention. Please contact the project team.'],
-      citation_validation_failed:[502,'The adviser returned unsupported citations. The answer was withheld; please try again.'],
     };
     const [status,message]=messages[error.message]||[503,'The adviser could not complete a verified answer. Please try again. Saved data is retained.'];
     return Response.json({error:message},{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...(status===429?{'Retry-After':'60'}:{})}});

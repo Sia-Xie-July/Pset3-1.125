@@ -40,8 +40,11 @@ assert.throws(()=>validateTool('get_country_metrics',{country:'Finland',metric_n
 assert.throws(()=>validateTool('calculate_energy',{it_load_mw:20,pue:0.8,operating_hours:8760}));
 const grounded={answer:'Local example [S1]',evidence_used:[1],assumptions:[],calculations:[],design_decisions:[],uncertainties:[]};
 assert.deepEqual(validateAnswer({...grounded},new Set([1])).evidence_used,[1]);
-assert.throws(()=>validateAnswer({...grounded,answer:'Unknown [S999]'},new Set([1])));
-assert.throws(()=>validateAnswer({...grounded,evidence_used:[]},new Set([1])));
+const uncertain=validateAnswer({...grounded,answer:'Unknown [S999]'},new Set([1]));
+assert.equal(uncertain.answer,'Unknown [S999]');assert.deepEqual(uncertain.unverified_source_ids,[999]);assert(uncertain.citation_warnings.length>0);assert(!uncertain.evidence_used.includes(999));
+const mismatch=validateAnswer({...grounded,evidence_used:[]},new Set([1]));
+assert.deepEqual(mismatch.evidence_used,[1]);assert(mismatch.citation_warnings.length>0);
+assert.equal(validateAnswer({...grounded,answer:'28 MW; 245.28 GWh.',evidence_used:[]},new Set()).citation_warnings.length,0);
 let rounds=0, executed=0;
 const usage={input_tokens:0,output_tokens:0,tool_calls:0};
 const output=await runAgent({key:'test-only',question:'PUE 1.4?',history:[],context:{},sourceIds:new Set([1]),usage,execute:async(name,args)=>{assert.equal(name,'calculate_energy');executed++;return energy(args.it_load_mw,args.pue,args.operating_hours);},fetcher:async(url,opts)=>{
@@ -53,12 +56,11 @@ const output=await runAgent({key:'test-only',question:'PUE 1.4?',history:[],cont
 assert.equal(executed,1);assert.equal(output.answer,grounded.answer);assert.deepEqual(usage,{input_tokens:15,output_tokens:6,tool_calls:1});
 console.log('PASS: controlled tool arguments, conversation trust boundary, real citation enforcement, structured Responses tool loop and accumulated token audit.');
 
-let correctionCalls=0;
-const repaired=await runAgent({key:'test-only',question:'Source?',history:[],context:{},sourceIds:new Set([1]),usage:{input_tokens:0,output_tokens:0,tool_calls:0},execute:async()=>assert.fail('No tools expected'),fetcher:async(url,opts)=>{
- correctionCalls++;const body=JSON.parse(opts.body);
- if(correctionCalls===2)assert.deepEqual(JSON.parse(body.input.at(-1).content).retrieved_source_ids,[1]);
- return Response.json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(correctionCalls===1?{...grounded,answer:'Fabricated [S999]',evidence_used:[999]}:grounded)}]}]});
+let modelCalls=0;
+const unverified=await runAgent({key:'test-only',question:'Source?',history:[],context:{},sourceIds:new Set([1]),usage:{input_tokens:0,output_tokens:0,tool_calls:0},execute:async()=>assert.fail('No tools expected'),fetcher:async()=>{
+ modelCalls++;
+ return Response.json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({...grounded,answer:'Unverified reference [S999]',evidence_used:[999]})}]}]});
 }});
-assert.equal(correctionCalls,2);assert.equal(repaired.answer,grounded.answer);
-await assert.rejects(()=>runAgent({key:'test-only',question:'Source?',history:[],context:{},sourceIds:new Set([1]),usage:{input_tokens:0,output_tokens:0,tool_calls:0},execute:async()=>assert.fail('No tools expected'),fetcher:async()=>Response.json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({...grounded,answer:'Fabricated [S999]',evidence_used:[999]})}]}]})}),/citation_validation_failed/);
-console.log('PASS: bounded citation correction and final fail-closed rejection.');
+assert.equal(modelCalls,1);assert.equal(unverified.answer,'Unverified reference [S999]');
+assert.deepEqual(unverified.evidence_used,[]);assert.deepEqual(unverified.unverified_source_ids,[999]);assert(unverified.citation_warnings.length>0);
+console.log('PASS: citation problems return the original answer immediately, with warnings and no invented source links.');
