@@ -21,7 +21,7 @@
 
 ## Publication, verification and submission
 
-- [ ] Publish the architecture-page addition from the original Sites-enabled workspace. Local TypeScript/build and desktop/mobile checks pass; this workspace cannot access Sites publication. Earlier version-14 verification below predates this addition.
+- [x] Architecture page, navigation and SVG/PDF downloads published from the original Sites-enabled workspace as version 15 on 6 October 2026. Earlier version-14 verification below predates this addition.
 
 - [x] Publish from the original Sites-enabled workspace; production migration 0003, configured secrets, authenticated administrator access and unchanged-baseline design saving verified.
 - [x] Credentialed production design/finance smoke checks performed; final finance rankings/currencies and anonymous API rejection verified. See live-review-2026-10-05.md for the semantic failures found.

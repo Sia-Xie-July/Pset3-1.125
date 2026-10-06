@@ -19,7 +19,7 @@ The browser sends adviser questions to the Sites backend, which checks identity 
 
 [Open the full-size diagram](site/public/deliverables/architecture-diagram.svg) · [Download the one-page PDF](site/public/deliverables/architecture-diagram.pdf)
 
-The website source includes a public `/architecture` page with the same diagram and a numbered, accessible request walkthrough. Publication of this new page requires the original Sites-enabled workspace. The separate [physical datacenter diagram](deliverables/system-diagram.pdf) covers power, cooling, networking and failure paths.
+The public [Website Architecture page](https://global-datacenter-design-explorer.tong-zhou.chatgpt.site/architecture) includes the same diagram and a numbered, accessible request walkthrough. The addition is published in Site version 15. The separate [physical datacenter diagram](deliverables/system-diagram.pdf) covers power, cooling, networking and failure paths.
 
 To regenerate both diagram formats, run `python3 deliverables/build_architecture.py` with `reportlab` installed. The generator uses shared drawing instructions to keep the website, README and PDF consistent.
 
@@ -30,6 +30,6 @@ To regenerate both diagram formats, run `python3 deliverables/build_architecture
 
 ## Completed analysis and written deliverables
 
-The investment model and project-management features from teammate commit `94b858c`, followed by administrator, feed and adviser fixes, are published as Site version 14. Open `/investment` for cost/stress/sensitivity analysis and `/decision` for demand, country research, engineering and governance. See [completion checklist](deliverables/completion-checklist.md), [test results](deliverables/test-results.md), [financial methodology](deliverables/financial-methodology.md), [system diagram](deliverables/system-diagram.pdf), and [request-flow guide](deliverables/submission-guide.pdf). The updated investment memo is `investment-memo.docx` and has two verified pages.
+The investment model and project-management features from teammate commit `94b858c`, followed by administrator, feed and adviser fixes, are published as Site version 15. Open `/investment` for cost/stress/sensitivity analysis and `/decision` for demand, country research, engineering and governance. See [completion checklist](deliverables/completion-checklist.md), [test results](deliverables/test-results.md), [financial methodology](deliverables/financial-methodology.md), [system diagram](deliverables/system-diagram.pdf), and [request-flow guide](deliverables/submission-guide.pdf). The updated investment memo is `investment-memo.docx` and has two verified pages.
 
 The original Sites-enabled workspace completed publication and production migration 0003. The verified owner account is now team administrator. The earlier Sites/credential limitation was specific to the teammate’s workspace. Real site offers, comparable datacenter statistics, quantitative site climate, water and fiber evidence remain unresolved. The two-minute demonstration video and course submission are still pending; do not treat historical checklist exclusions as cancellation of the course requirement. See `deliverables/live-review-2026-10-05.md` for current verification scope.
