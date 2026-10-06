@@ -15,10 +15,13 @@
 - [x] Three-country qualitative evidence comparison; unavailable comparable counts/site values remain NULL.
 - [x] Two-page investment memo and three findings that could reverse the recommendation.
 - [x] One-page power/cooling/network/failure diagram.
+- [x] Separate website/AI architecture diagram in SVG and PDF, README embed, and public `/architecture` route with an accessible request walkthrough.
 - [x] Individual browser-to-D1-to-OpenAI explanation and source/API inventory.
 - [x] Local build, types, model, migration, refresh, permissions and UI checks; see test-results.md for exact scope.
 
 ## Publication, verification and submission
+
+- [ ] Publish the architecture-page addition from the original Sites-enabled workspace. Local TypeScript/build and desktop/mobile checks pass; this workspace cannot access Sites publication. Earlier version-14 verification below predates this addition.
 
 - [x] Publish from the original Sites-enabled workspace; production migration 0003, configured secrets, authenticated administrator access and unchanged-baseline design saving verified.
 - [x] Credentialed production design/finance smoke checks performed; final finance rankings/currencies and anonymous API rejection verified. See live-review-2026-10-05.md for the semantic failures found.

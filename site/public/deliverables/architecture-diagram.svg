@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1160" viewBox="0 0 1320 1160" role="img" aria-labelledby="title desc">
+<title id="title">Website and AI architecture</title>
+<desc id="desc">A browser sends a question to the Sites backend. The backend verifies platform identity, D1 registration and rate limits, retrieves evidence and runs controlled tools, calls OpenAI, and returns classified answers with real source links. A separate authorized refresh validates approved API data before saving to D1; failures retain prior observations. Secrets stay on the server.</desc>
+<rect x="0" y="0" width="1320" height="1160" rx="0" fill="#F5F8FC" stroke="#F5F8FC"/>
+<rect x="0" y="0" width="1320" height="144" rx="0" fill="#172D49" stroke="#172D49"/>
+<text x="40" y="42" fill="#9DD8E5" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700">GLOBAL DATACENTER DESIGN EXPLORER</text>
+<text x="40" y="88" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="37" font-weight="700">Website and AI architecture</text>
+<text x="40" y="121" fill="#D5E2EF" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400">Current application flow  /  Evidence in D1  /  Server-controlled access and tools</text>
+<text x="40" y="186" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">BROWSER</text>
+<text x="375" y="186" fill="#285AA5" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">SITES BACKEND</text>
+<text x="1010" y="186" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">DATA AND SERVICES</text>
+<rect x="350" y="202" width="630" height="607" rx="20" fill="#E9F0F9" stroke="#B8CEE8"/>
+<rect x="40" y="225" width="270" height="148" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<rect x="58" y="243" width="32" height="32" rx="9" fill="#285AA5" stroke="#285AA5"/>
+<text x="67" y="266" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">1</text>
+<text x="104" y="267" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Ask a question</text>
+<text x="60" y="301" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Question + bounded history</text>
+<text x="60" y="326" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Public pages need no login.</text>
+<text x="60" y="351" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Adviser requires registration.</text>
+<rect x="375" y="225" width="580" height="148" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<rect x="393" y="243" width="32" height="32" rx="9" fill="#285AA5" stroke="#285AA5"/>
+<text x="402" y="266" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">2</text>
+<text x="439" y="267" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Check access</text>
+<text x="395" y="301" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Trusted platform identity + D1 users / roles</text>
+<text x="395" y="326" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Validate origin and request; reserve rate-limit slot.</text>
+<text x="395" y="351" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Anonymous 401  /  unregistered 403  /  limit 429</text>
+<polyline points="310,275 375,275" fill="none" stroke="#285AA5" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="375,275 365.8691105968769,279.0776045305957 365.8691105968769,270.9223954694043" fill="#285AA5"/>
+<rect x="40" y="413" width="270" height="142" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<text x="60" y="455" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Sign in with ChatGPT</text>
+<text x="60" y="489" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Platform authenticates user.</text>
+<text x="60" y="514" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Site registration creates</text>
+<text x="60" y="539" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">a separate D1 users row.</text>
+<polyline points="175,413 175,373" fill="none" stroke="#285AA5" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="7 6"/>
+<polygon points="175,373 179.0776045305957,382.1308894031231 170.9223954694043,382.1308894031231" fill="#285AA5"/>
+<rect x="1010" y="225" width="270" height="158" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<text x="1030" y="267" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Cloudflare D1</text>
+<text x="1030" y="301" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Design + financial settings</text>
+<text x="1030" y="326" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Claims, metrics + sources</text>
+<text x="1030" y="351" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Users, audit + request usage</text>
+<polyline points="955,287 1010,287" fill="none" stroke="#285AA5" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="1010,287 1000.8691105968769,291.0776045305957 1000.8691105968769,282.9223954694043" fill="#285AA5"/>
+<polygon points="955,287 964.1308894031231,282.9223954694043 964.1308894031231,291.0776045305957" fill="#285AA5"/>
+<rect x="375" y="426" width="580" height="180" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<rect x="393" y="444" width="32" height="32" rx="9" fill="#285AA5" stroke="#285AA5"/>
+<text x="402" y="467" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">3</text>
+<text x="439" y="468" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Retrieve and reason</text>
+<text x="395" y="502" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Load current design, relevant claims and real sources.</text>
+<text x="395" y="527" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Server executes allowlisted tools for the model:</text>
+<text x="395" y="552" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">D1 lookups, energy and financial calculations,</text>
+<text x="395" y="577" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">or an approved API read with saved-data fallback.</text>
+<polyline points="660,373 660,426" fill="none" stroke="#285AA5" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="660,426 655.9223954694043,416.8691105968769 664.0776045305957,416.8691105968769" fill="#285AA5"/>
+<polyline points="1110,383 1110,403 930,403 930,426" fill="none" stroke="#087C78" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="930,426 925.9223954694043,416.8691105968769 934.0776045305957,416.8691105968769" fill="#087C78"/>
+<rect x="1010" y="426" width="270" height="180" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<text x="1030" y="468" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">OpenAI Responses</text>
+<text x="1030" y="502" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Receives scoped evidence.</text>
+<text x="1030" y="527" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">May request controlled tools.</text>
+<text x="1030" y="552" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Backend returns tool results.</text>
+<text x="1030" y="577" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Model returns typed claims.</text>
+<polyline points="955,485 1010,485" fill="none" stroke="#285AA5" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="1010,485 1000.8691105968769,489.0776045305957 1000.8691105968769,480.9223954694043" fill="#285AA5"/>
+<polygon points="955,485 964.1308894031231,480.9223954694043 964.1308894031231,489.0776045305957" fill="#285AA5"/>
+<rect x="1010" y="651" width="270" height="137" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<text x="1030" y="693" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Approved APIs</text>
+<text x="1030" y="727" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Hydro-Quebec / data.gov.sg</text>
+<text x="1030" y="752" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Fingrid consumption (S11)</text>
+<text x="1030" y="777" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Fixed URLs; validated data.</text>
+<polyline points="935,606 935,624 1145,624 1145,651" fill="none" stroke="#087C78" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="1145,651 1140.9223954694044,641.8691105968769 1149.0776045305956,641.8691105968769" fill="#087C78"/>
+<polygon points="935,606 939.0776045305957,615.1308894031231 930.9223954694043,615.1308894031231" fill="#087C78"/>
+<rect x="375" y="651" width="530" height="137" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<rect x="393" y="669" width="32" height="32" rx="9" fill="#285AA5" stroke="#285AA5"/>
+<text x="402" y="692" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">4</text>
+<text x="439" y="693" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Return a sourced answer</text>
+<text x="395" y="727" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Render classifications and real D1 source links.</text>
+<text x="395" y="752" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Unmatched citations get an advisory warning.</text>
+<text x="395" y="777" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Record token usage and request outcome.</text>
+<polyline points="660,606 660,651" fill="none" stroke="#285AA5" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="660,651 655.9223954694043,641.8691105968769 664.0776045305957,641.8691105968769" fill="#285AA5"/>
+<rect x="40" y="623" width="270" height="165" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<rect x="58" y="641" width="32" height="32" rx="9" fill="#285AA5" stroke="#285AA5"/>
+<text x="67" y="664" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">5</text>
+<text x="104" y="665" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Read the response</text>
+<text x="60" y="699" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Answer + citations</text>
+<text x="60" y="724" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Assumptions + calculations</text>
+<text x="60" y="749" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Decisions + uncertainties</text>
+<text x="60" y="774" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Warnings where needed.</text>
+<polyline points="375,720 310,720" fill="none" stroke="#285AA5" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="310,720 319.1308894031231,715.9223954694043 319.1308894031231,724.0776045305957" fill="#285AA5"/>
+<text x="40" y="852" fill="#087C78" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">SEPARATE FLOW  /  AUTHORIZED EVIDENCE REFRESH</text>
+<rect x="40" y="872" width="270" height="110" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<text x="60" y="914" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Editor / administrator</text>
+<text x="60" y="948" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Requests protected refresh.</text>
+<rect x="350" y="872" width="300" height="110" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<text x="370" y="914" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Backend fetch + validate</text>
+<text x="370" y="948" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Approved API; check all records.</text>
+<rect x="690" y="872" width="300" height="110" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<text x="710" y="914" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Atomic D1 save</text>
+<text x="710" y="948" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Append data + refresh timestamp.</text>
+<rect x="1030" y="872" width="250" height="110" rx="14" fill="#FFFFFF" stroke="#CCD8E4"/>
+<text x="1050" y="914" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">Updated page</text>
+<text x="1050" y="948" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400">Show data + provenance.</text>
+<polyline points="310,929 350,929" fill="none" stroke="#087C78" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="350,929 340.8691105968769,933.0776045305957 340.8691105968769,924.9223954694043" fill="#087C78"/>
+<polyline points="650,929 690,929" fill="none" stroke="#087C78" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="690,929 680.8691105968769,933.0776045305957 680.8691105968769,924.9223954694043" fill="#087C78"/>
+<polyline points="990,929 1030,929" fill="none" stroke="#087C78" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon points="1030,929 1020.8691105968769,933.0776045305957 1020.8691105968769,924.9223954694043" fill="#087C78"/>
+<text x="350" y="1017" fill="#965D19" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400">If retrieval or validation fails: retain last valid observations and record a visible failure.</text>
+<rect x="40" y="1052" width="1240" height="74" rx="10" fill="#E7EEF5" stroke="#E7EEF5"/>
+<text x="60" y="1081" fill="#285AA5" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700">SERVER BOUNDARY</text>
+<text x="254" y="1081" fill="#172D49" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400">API keys stay server-side. Browsers and models have no direct D1 access.</text>
+<text x="60" y="1111" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400">Retrieved text and history are untrusted evidence. Valid citations do not guarantee a complete or correct answer.</text>
+<text x="40" y="1148" fill="#50657B" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400">Assignment Steps 14, 16-24 and 26  |  Application architecture; physical datacenter design is a separate diagram.</text>
+</svg>

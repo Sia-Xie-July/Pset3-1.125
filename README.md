@@ -11,6 +11,18 @@ The public Site is published at https://global-datacenter-design-explorer.tong-z
 
 The original workstation used ignored `site/.dev.vars` and production Sites Secrets for Fingrid and OpenAI. A fresh checkout has no local credentials. Never put its value in D1, Git, browser code or this documentation. Dataset 124 consumption is connected; carbon/forecast endpoint verification remains pending. The AI adviser now uses a server-side OpenAI Responses request with controlled D1/API tools, real source citations, registration checks and request limits. See `site/README.md` for Steps 18–21.
 
+## Website and AI architecture
+
+The browser sends adviser questions to the Sites backend, which checks identity and D1 registration, retrieves current evidence, executes controlled tools and calls OpenAI. The backend returns classified statements with real source links and records request usage. A separate authorized refresh validates approved API data before saving it; failures retain the last valid observations. API keys remain on the server.
+
+![Website architecture showing the browser, access checks, D1, controlled tools, OpenAI, cited responses and protected evidence refresh](site/public/deliverables/architecture-diagram.svg)
+
+[Open the full-size diagram](site/public/deliverables/architecture-diagram.svg) · [Download the one-page PDF](site/public/deliverables/architecture-diagram.pdf)
+
+The website source includes a public `/architecture` page with the same diagram and a numbered, accessible request walkthrough. Publication of this new page requires the original Sites-enabled workspace. The separate [physical datacenter diagram](deliverables/system-diagram.pdf) covers power, cooling, networking and failure paths.
+
+To regenerate both diagram formats, run `python3 deliverables/build_architecture.py` with `reportlab` installed. The generator uses shared drawing instructions to keep the website, README and PDF consistent.
+
 ## Repository layout
 
 `site/` is tracked as a normal source directory in this assignment repository, so cloning the repository includes the website code. Local secrets, dependencies and build output are ignored. On the original workstation, Sites publishing history is retained separately in `.git/sites-publishing.git`, referenced by the local-only `site/.git` file; neither is uploaded to GitHub.
